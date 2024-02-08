@@ -38,4 +38,21 @@ public class APIConnection {
             System.out.println("Failed to save data to JSON [" + e + "]");
         }
     }
+
+    public void getATPRanking() throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/rankings/atp"))
+                .header("X-RapidAPI-Key", APIkey)
+                .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+        try(BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream("src/main/resources/API/ATPranking.json"), StandardCharsets.UTF_8))){
+            writer.write(response.body());
+        } catch (IOException e) {
+            System.out.println("Failed to save data to JSON [" + e + "]");
+        }
+    }
 }

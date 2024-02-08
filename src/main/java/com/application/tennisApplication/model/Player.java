@@ -19,7 +19,18 @@ public class Player {
     private int tournamentsPlayed;
     private int teamid;
 
+    public Player(String name, String gender, String country, int ranking, int points, int tournamentsPlayed, int teamid) {
+        this.name = name;
+        this.gender = gender;
+        this.country = country;
+        this.ranking = ranking;
+        this.points = points;
+        this.tournamentsPlayed = tournamentsPlayed;
+        this.teamid = teamid;
+    }
+
     public Player() {
+
     }
 
     public int getPlayerID() {
