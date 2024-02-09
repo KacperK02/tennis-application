@@ -33,6 +33,9 @@ public class TennisApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws IOException {
-		playerService.savePlayersFromFile();
+		if(playerService.getAllPlayers().size() == 0){
+			playerService.savePlayersFromFile();
+		}
+
 	}
 }

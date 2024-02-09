@@ -43,4 +43,19 @@ public class PlayerServiceImpl implements PlayerService{
 
         playerRepository.saveAll(players);
     }
+
+    @Override
+    public List<Player> getAllPlayers() {
+        return playerRepository.findAll();
+    }
+
+    @Override
+    public List<Player> getAllWTAPlayers() {
+        return playerRepository.findByGender("F");
+    }
+
+    @Override
+    public List<Player> getAllATPPlayers() {
+        return playerRepository.findByGender("M");
+    }
 }
