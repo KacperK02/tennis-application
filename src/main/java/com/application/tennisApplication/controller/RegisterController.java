@@ -1,0 +1,36 @@
+package com.application.tennisApplication.controller;
+
+import com.application.tennisApplication.model.User;
+import com.application.tennisApplication.repository.UserRepository;
+import com.application.tennisApplication.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+@Controller
+public class RegisterController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/registration")
+    public String registration(@ModelAttribute User user, Model model){
+        if(userRepository.findByUsername(user.getUsername()) != null){
+            model.addAttribute("error", "Podana nazwa użytkownika jest już zajęta");
+            return "register";
+        }
+
+        if(userRepository.findByEmail(user.getEmail()) != null){
+            model.addAttribute("error", "Podany adres email jest już zajęty");
+            return "register";
+        }
+
+        userService.saveUser(user);
+        return "index";
+    }
+}

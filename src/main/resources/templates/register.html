@@ -21,7 +21,7 @@
 </header>
 
 <section class="login-section">
-  <form action="/register" method="post">
+  <form th:action="@{/registration}" th:object="${user}" method="post">
     <div>
       <label for="username">Nazwa użytkownika:</label>
       <input type="text" id="username" name="username" required>
@@ -37,6 +37,7 @@
     <div>
       <button type="submit">Zarejestruj się</button>
     </div>
+    <div th:if="${error}" style="color: red;">[[${error}]]</div>
   </form>
 </section>
 
