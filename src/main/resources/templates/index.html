@@ -16,13 +16,29 @@
             <li><a th:href="@{WTARanking}">Ranking WTA</a></li>
             <li><a th:href="@{ATPRanking}">Ranking ATP</a></li>
             <li><a th:href="@{/}">Twoje Konto</a></li>
-            <li><a th:href="@{/}">Zaloguj się</a></li>
         </ul>
     </nav>
 </header>
 
 <section class="about-section">
     <p>Najlepszy serwis dla polskich fanów tenisa! Śledź informacje o swoich ulubionych zawodnikach i nie przegap ich żadnego meczu. Załóż konto już teraz!</p>
+</section>
+
+<section class="login-section">
+    <form action="/login" method="post">
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Hasło:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <button type="submit">Zaloguj się</button>
+            <a th:href="@{register}"><button type="button">Zarejestruj się</button></a>
+        </div>
+    </form>
 </section>
 
 <footer>
