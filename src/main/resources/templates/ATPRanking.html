@@ -22,7 +22,27 @@
 </header>
 
 <section class="about-section">
-  <p>Ranking ATP</p>
+  <p>Aktualny ranking ATP. Najnowsze notowanie w każdy poniedziałek.</p>
+
+  <table class="table">
+    <tr>
+      <th>RANKING ATP: </th>
+    </tr>
+    <tr>
+      <td><b>Miejsce</b></td>
+      <td><b>Imię i nazwisko</b></td>
+      <td><b>Kraj</b></td>
+      <td><b>Punkty</b></td>
+      <td><b>Rozegrane turnieje</b></td>
+    </tr>
+    <tr th:each="player : ${players}">
+      <td th:text="${player.ranking + '.'}"></td>
+      <td th:text="${player.name}"></td>
+      <td th:text="${player.country}"></td>
+      <td th:text="${player.points}"></td>
+      <td th:text="${player.tournamentsPlayed}"></td>
+    </tr>
+  </table>
 </section>
 
 <footer>

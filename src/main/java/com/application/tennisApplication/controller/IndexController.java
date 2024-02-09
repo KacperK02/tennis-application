@@ -10,14 +10,4 @@ public class IndexController {
     public String index(){
         return "index";
     }
-
-    @GetMapping("/WTARanking")
-    public String WTARanking(){
-        return "WTARanking";
-    }
-
-    @GetMapping("/ATPRanking")
-    public String ATPRanking(){
-        return "ATPRanking";
-    }
 }
