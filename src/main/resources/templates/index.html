@@ -25,6 +25,7 @@
 </section>
 
 <section class="login-section">
+    <div th:if="${registration_completed}">[[${registration_completed}]]</div>
     <form action="/login" method="post">
         <div>
             <label for="email">Email:</label>

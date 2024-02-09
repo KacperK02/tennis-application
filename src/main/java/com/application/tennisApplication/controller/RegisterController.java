@@ -31,6 +31,7 @@ public class RegisterController {
         }
 
         userService.saveUser(user);
+        model.addAttribute("registration_completed", "Konto zostało utworzone pomyślnie! Możesz się teraz zalogować.");
         return "index";
     }
 }
