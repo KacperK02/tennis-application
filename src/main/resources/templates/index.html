@@ -15,7 +15,7 @@
             <li><a th:href="@{/}">Strona Główna</a></li>
             <li><a th:href="@{WTARanking}">Ranking WTA</a></li>
             <li><a th:href="@{ATPRanking}">Ranking ATP</a></li>
-            <li><a th:href="@{/}">Twoje Konto</a></li>
+            <li><a th:href="@{account}">Twoje Konto</a></li>
         </ul>
     </nav>
 </header>
@@ -26,7 +26,7 @@
 
 <section class="login-section">
     <div th:if="${registration_completed}">[[${registration_completed}]]</div>
-    <form action="/login" method="post">
+    <form th:action="@{/login}" th:object="${user}" method="post">
         <div>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
@@ -38,6 +38,7 @@
         <div>
             <button type="submit">Zaloguj się</button>
             <a th:href="@{register}"><button type="button">Zarejestruj się</button></a>
+            <div th:if="${login_error}" style="color: red;">[[${login_error}]]</div>
         </div>
     </form>
 </section>

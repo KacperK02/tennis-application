@@ -21,28 +21,9 @@
 </header>
 
 <section class="about-section">
-    <p>Aktualny ranking WTA. Najnowsze notowanie w każdy poniedziałek.</p>
-
-    <table class="table">
-        <tr>
-            <th>RANKING WTA: </th>
-        </tr>
-        <tr>
-            <td><b>Miejsce</b></td>
-            <td><b>Imię i nazwisko</b></td>
-            <td><b>Kraj</b></td>
-            <td><b>Punkty</b></td>
-            <td><b>Rozegrane turnieje</b></td>
-        </tr>
-        <tr th:each="player : ${players}">
-            <td th:text="${player.ranking + '.'}"></td>
-            <td th:text="${player.name}"></td>
-            <td th:text="${player.country}"></td>
-            <td th:text="${player.points}"></td>
-            <td th:text="${player.tournamentsPlayed}"></td>
-        </tr>
-    </table>
+    <p>Twoje konto</p>
 </section>
+
 
 <footer>
     <p>&copy; 2024 StrefaTenisa.pl. Wszelkie prawa zastrzeżone.</p>
