@@ -30,6 +30,7 @@ public class LoginController {
         if(user != null && passwordEncoder.matches(password, user.getPassword()) && session.getAttribute("user") == null){
             userRepository.save(user);
             session.setAttribute("user", user);
+            model.addAttribute("user_logged", true);
             return "account";
         }
         else if (user != null && passwordEncoder.matches(password, user.getPassword()) && session.getAttribute("user") != null){

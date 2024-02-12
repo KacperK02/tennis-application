@@ -2,7 +2,6 @@ package com.application.tennisApplication;
 
 import com.application.tennisApplication.API.APIConnection;
 import com.application.tennisApplication.service.PlayerService;
-import com.application.tennisApplication.service.PlayerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,7 +28,6 @@ public class TennisApplication implements CommandLineRunner{
 		}*/
 
 		SpringApplication.run(TennisApplication.class, args);
-
 	}
 
 	@Override
