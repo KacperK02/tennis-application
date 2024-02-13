@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -34,6 +35,23 @@ public class FollowController {
         }
         else {
             model.addAttribute("follow_not_allowed", "Musisz być zalogowany, by śledzić gracza.");
+        }
+        return "redirect:/account";
+    }
+
+    @PostMapping("/deleteFollow")
+    public String deleteFollow(@RequestParam("playerID") int playerID, HttpSession session){
+        List<Follow> follows = followRepository.findAll();
+        Optional<Player> players = playerService.getPlayerById(playerID);
+        if (players.isPresent() && session.getAttribute("user") != null){
+            Player player = players.get();
+            User user = (User) session.getAttribute("user");
+            for (Follow follow : follows) {
+                if (follow.getUser().getUserID() == user.getUserID() && follow.getPlayer().getPlayerID() == player.getPlayerID()) {
+                    followRepository.delete(follow);
+                    break;
+                }
+            }
         }
         return "redirect:/account";
     }
