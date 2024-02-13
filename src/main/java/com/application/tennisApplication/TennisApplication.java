@@ -18,7 +18,7 @@ public class TennisApplication implements CommandLineRunner{
 
 	public static void main(String[] args) throws IOException{
 
-		/*(APIConnection apiConnection = new APIConnection();
+		/*APIConnection apiConnection = new APIConnection();
 		try{
 			apiConnection.getWTARanking();
 			apiConnection.getATPRanking();
