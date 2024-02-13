@@ -23,7 +23,7 @@ public class AccountController {
             User user = (User) session.getAttribute("user");
             List<Player> followedPlayers = followService.getFollowedPlayers(user.getUserID());
             model.addAttribute("followed_players", followedPlayers);
-            return "/account";
+            return "account";
         }
         else{
             model.addAttribute("login_error", "Najpierw musisz się zalogować na swoje konto.");

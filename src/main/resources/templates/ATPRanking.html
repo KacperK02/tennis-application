@@ -33,6 +33,7 @@
       <td><b>Kraj</b></td>
       <td><b>Punkty</b></td>
       <td><b>Rozegrane turnieje</b></td>
+      <td><b>Obserwuj gracza</b></td>
     </tr>
     <tr th:each="player : ${players}">
       <td th:text="${player.ranking + '.'}"></td>
@@ -40,6 +41,9 @@
       <td th:text="${player.country}"></td>
       <td th:text="${player.points}"></td>
       <td th:text="${player.tournamentsPlayed}"></td>
+      <td><form th:action="@{/newFollow}" th:object="${player}" method="post">
+        <input type="hidden" name="playerID" th:value="${player.playerID}" />
+        <button type="submit">Obserwuj</button></form></td>
     </tr>
   </table>
 </section>

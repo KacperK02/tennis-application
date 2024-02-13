@@ -4,7 +4,6 @@ import com.application.tennisApplication.model.Follow;
 import com.application.tennisApplication.model.Player;
 import com.application.tennisApplication.model.User;
 import com.application.tennisApplication.repository.FollowRepository;
-import com.application.tennisApplication.service.FollowService;
 import com.application.tennisApplication.service.PlayerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,6 @@ public class FollowController {
         else {
             model.addAttribute("follow_not_allowed", "Musisz być zalogowany, by śledzić gracza.");
         }
-        return "account";
+        return "redirect:/account";
     }
 }
