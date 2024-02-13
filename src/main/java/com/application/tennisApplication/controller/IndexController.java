@@ -40,19 +40,6 @@ public class IndexController {
         return "register";
     }
 
-    @GetMapping("/account")
-    public String account(HttpSession session, Model model){
-        if (session.getAttribute("user") != null){
-            return "account";
-        }
-        else{
-            model.addAttribute("login_error", "Najpierw musisz się zalogować na swoje konto.");
-            model.addAttribute("user_not_logged", true);
-            model.addAttribute("user_logged", false);
-            return "index";
-        }
-    }
-
     @PostMapping("/logout")
     public String logout(Model model, HttpSession session){
         session.invalidate();

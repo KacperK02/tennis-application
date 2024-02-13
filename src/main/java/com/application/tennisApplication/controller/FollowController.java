@@ -36,6 +36,6 @@ public class FollowController {
         else {
             model.addAttribute("follow_not_allowed", "Musisz być zalogowany, by śledzić gracza.");
         }
-        return "WTARanking";
+        return "account";
     }
 }

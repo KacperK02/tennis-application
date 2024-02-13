@@ -21,7 +21,20 @@
 </header>
 
 <section class="about-section">
-    <p>Twoje konto</p>
+
+    <table class="table">
+        <tr>
+            <th>Obserwowani zawodnicy: </th>
+        </tr>
+        <tr>
+            <td><b>Miejsce w rankingu</b></td>
+            <td><b>Imię i nazwisko</b></td>
+        </tr>
+        <tr th:each="player : ${followed_players}">
+            <td th:text="${player.ranking + '.'}"></td>
+            <td th:text="${player.name}"></td>
+        </tr>
+    </table>
 </section>
 
 
