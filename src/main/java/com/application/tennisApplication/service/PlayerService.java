@@ -4,6 +4,7 @@ import com.application.tennisApplication.model.Player;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public interface PlayerService {
     public void savePlayersFromFile() throws IOException;
@@ -11,4 +12,6 @@ public interface PlayerService {
 
     public List<Player> getAllWTAPlayers();
     public List<Player> getAllATPPlayers();
+
+    public Optional<Player> getPlayerById(int id);
 }

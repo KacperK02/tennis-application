@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerServiceImpl implements PlayerService{
@@ -57,5 +58,10 @@ public class PlayerServiceImpl implements PlayerService{
     @Override
     public List<Player> getAllATPPlayers() {
         return playerRepository.findByGender("M");
+    }
+
+    @Override
+    public Optional<Player> getPlayerById(int id) {
+        return playerRepository.findById(id);
     }
 }
