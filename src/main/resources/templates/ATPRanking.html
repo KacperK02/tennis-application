@@ -41,9 +41,11 @@
       <td th:text="${player.country}"></td>
       <td th:text="${player.points}"></td>
       <td th:text="${player.tournamentsPlayed}"></td>
-      <td><form th:action="@{/newFollow}" th:object="${player}" method="post">
+      <td><form th:action="@{/newFollow}" th:object="${player}" method="post" th:unless="${player.following}">
         <input type="hidden" name="playerID" th:value="${player.playerID}" />
-        <button type="submit">Obserwuj</button></form></td>
+        <button type="submit">Obserwuj</button></form>
+        <div th:if="${player.following}">Obserwujesz</div>
+      </td>
     </tr>
   </table>
 </section>

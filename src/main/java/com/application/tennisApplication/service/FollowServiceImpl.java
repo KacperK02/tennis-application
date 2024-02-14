@@ -26,4 +26,15 @@ public class FollowServiceImpl implements FollowService{
         }
         return followedPlayers;
     }
+
+    @Override
+    public boolean isPlayerFollowedByUser(int playerId, int userId) {
+        List <Follow> follows = followRepository.findAll();
+        for (Follow follow : follows){
+            if (follow.getUser().getUserID() == userId && follow.getPlayer().getPlayerID() == playerId){
+                return true;
+            }
+        }
+        return false;
+    }
 }

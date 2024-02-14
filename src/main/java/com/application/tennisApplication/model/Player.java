@@ -1,9 +1,6 @@
 package com.application.tennisApplication.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Player {
@@ -19,6 +16,17 @@ public class Player {
     private int tournamentsPlayed;
     private int teamid;
 
+    @Transient
+    private boolean following;
+
+    public boolean isFollowing() {
+        return following;
+    }
+
+    public void setFollowing(boolean following) {
+        this.following = following;
+    }
+
     public Player(String name, String gender, String country, int ranking, int points, int tournamentsPlayed, int teamid) {
         this.name = name;
         this.gender = gender;
@@ -27,6 +35,7 @@ public class Player {
         this.points = points;
         this.tournamentsPlayed = tournamentsPlayed;
         this.teamid = teamid;
+        this.following = false;
     }
 
     public Player() {
