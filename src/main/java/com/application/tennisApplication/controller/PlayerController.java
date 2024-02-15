@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,10 +77,10 @@ public class PlayerController {
         if (playerOptional.isPresent()){
             Player player = playerOptional.get();
 
-            //APIConnection apiConnection = new APIConnection();
-            //apiConnection.getPlayerLastTournaments(String.valueOf(player.getTeamid()));
+            APIConnection apiConnection = new APIConnection();
+            String response = apiConnection.getPlayerLastTournaments(String.valueOf(player.getTeamid()));
 
-            List <Tournament> tournaments = getPlayerTournaments();
+            List <Tournament> tournaments = getPlayerTournaments(response);
 
             model.addAttribute("tournaments", tournaments);
             model.addAttribute("player", player);
@@ -89,11 +88,11 @@ public class PlayerController {
         return "playerInfo";
     }
 
-    private List<Tournament> getPlayerTournaments() throws IOException {
+    private List<Tournament> getPlayerTournaments(String response) throws IOException {
         List <Tournament> tournaments = new ArrayList<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(new File("src/main/resources/API/playerLastTournaments.json"));
+        JsonNode jsonNode = objectMapper.readTree(response);
         JsonNode jsonNode2 = jsonNode.path("uniqueTournaments");
 
         for (JsonNode node : jsonNode2){
