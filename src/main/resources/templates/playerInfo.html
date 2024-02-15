@@ -30,9 +30,23 @@
 </section>
 
 
-<footer>
-    <p>&copy; 2024 StrefaTenisa.pl. Wszelkie prawa zastrzeżone.</p>
-</footer>
+<table class="table" style="margin-bottom: 30px">
+    <tr>
+        <th>Wyniki w ostatnich turniejach</th>
+    </tr>
+    <tr>
+        <td><b>Turniej</b></td>
+        <td><b>Ranga</b></td>
+        <td><b>Runda</b></td>
+    </tr>
+    <tr th:each="tournament : ${tournaments}">
+        <td th:text="${tournament.name}"></td>
+        <td th:text="${tournament.rank}"></td>
+        <td th:text="${tournament.round}"></td>
+    </tr>
+</table>
+
+
 
 </body>
 </html>

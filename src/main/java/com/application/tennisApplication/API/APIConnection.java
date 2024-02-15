@@ -55,4 +55,21 @@ public class APIConnection {
             System.out.println("Failed to save data to JSON [" + e + "]");
         }
     }
+
+    public void getPlayerLastTournaments(String teamId) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/tournaments/last"))
+                .header("X-RapidAPI-Key", "704e532d3amshf06af8f8d4e4b4bp1602e1jsn6eb95ee30724")
+                .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+        try(BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream("src/main/resources/API/playerLastTournaments.json"), StandardCharsets.UTF_8))){
+            writer.write(response.body());
+        } catch (IOException e) {
+            System.out.println("Failed to save data to JSON [" + e + "]");
+        }
+    }
 }
