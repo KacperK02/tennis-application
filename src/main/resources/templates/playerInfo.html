@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>StrefaTenisa.pl</title>
+</head>
+<body>
+
+<header>
+    <h1>StrefaTenisa.pl</h1>
+    <nav>
+        <ul>
+            <li><a th:href="@{index}">Strona Główna</a></li>
+            <li><a th:href="@{WTARanking}">Ranking WTA</a></li>
+            <li><a th:href="@{ATPRanking}">Ranking ATP</a></li>
+            <li><a th:href="@{account}">Twoje Konto</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="about-section">
+    <p><b>Szczegółowe informacje o zawodniku</b></p>
+    <p>Imię i nazwisko: <span th:text="${player.name}"></span></p>
+    <p>Kraj: <span th:text="${player.country}"></span></p>
+    <p>Miejsce w rankingu: <span th:text="${player.ranking}"></span></p>
+    <p>Punkty: <span th:text="${player.points}"></span></p>
+    <p>Rozegrane turnieje: <span th:text="${player.tournamentsPlayed}"></span></p>
+</section>
+
+
+<footer>
+    <p>&copy; 2024 StrefaTenisa.pl. Wszelkie prawa zastrzeżone.</p>
+</footer>
+
+</body>
+</html>

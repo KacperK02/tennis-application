@@ -31,7 +31,7 @@ public class LoginController {
             userRepository.save(user);
             session.setAttribute("user", user);
             model.addAttribute("user_logged", true);
-            return "account";
+            return "redirect:/account";
         }
         else if (user != null && passwordEncoder.matches(password, user.getPassword()) && session.getAttribute("user") != null){
             session.setAttribute("user", user);

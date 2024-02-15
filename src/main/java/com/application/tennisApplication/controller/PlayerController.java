@@ -1,20 +1,16 @@
 package com.application.tennisApplication.controller;
 
-import com.application.tennisApplication.model.Follow;
 import com.application.tennisApplication.model.Player;
 import com.application.tennisApplication.model.User;
 import com.application.tennisApplication.repository.FollowRepository;
 import com.application.tennisApplication.service.FollowService;
 import com.application.tennisApplication.service.PlayerService;
 import jakarta.servlet.http.HttpSession;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.HTML;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +62,15 @@ public class PlayerController {
 
         model.addAttribute("players", players);
         return "ATPRanking";
+    }
+
+    @GetMapping("/playerInfo")
+    public String playerInfo(@RequestParam("playerID") int playerId, Model model){
+        Optional<Player> playerOptional = playerService.getPlayerById(playerId);
+        if (playerOptional.isPresent()){
+            Player player = playerOptional.get();
+            model.addAttribute("player", player);
+        }
+        return "playerInfo";
     }
 }
