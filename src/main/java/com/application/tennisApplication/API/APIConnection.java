@@ -22,45 +22,9 @@ public class APIConnection {
         }
     }
 
-    public void getWTARanking() throws IOException, InterruptedException {
+    private String getResponseFromAPI(String url) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/rankings/wta"))
-                .header("X-RapidAPI-Key", APIkey)
-                .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-        try(BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream("src/main/resources/API/WTAranking.json"), StandardCharsets.UTF_8))){
-            writer.write(response.body());
-        } catch (IOException e) {
-            System.out.println("Failed to save data to JSON [" + e + "]");
-        }
-    }
-
-    public void getATPRanking() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/rankings/atp"))
-                .header("X-RapidAPI-Key", APIkey)
-                .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-        try(BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream("src/main/resources/API/ATPranking.json"), StandardCharsets.UTF_8))){
-            writer.write(response.body());
-        } catch (IOException e) {
-            System.out.println("Failed to save data to JSON [" + e + "]");
-        }
-    }
-
-    public String getPlayerLastTournaments(String teamId) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/tournaments/last"))
+                .uri(URI.create(url))
                 .header("X-RapidAPI-Key", APIkey)
                 .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
@@ -69,5 +33,28 @@ public class APIConnection {
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
         return response.body();
+    }
+
+    private void saveRankingToJSON(String name, String response){
+        try(BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(name), StandardCharsets.UTF_8))){
+            writer.write(response);
+        } catch (IOException e) {
+            System.out.println("Failed to save data to JSON [" + e + "]");
+        }
+    }
+
+    public void getWTARanking() throws IOException, InterruptedException {
+        String response = getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/rankings/wta");
+        saveRankingToJSON("src/main/resources/API/WTAranking.json", response);
+    }
+
+    public void getATPRanking() throws IOException, InterruptedException {
+        String response = getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/rankings/atp");
+        saveRankingToJSON("src/main/resources/API/ATPranking.json", response);
+    }
+
+    public String getPlayerLastTournaments(String teamId) throws IOException, InterruptedException {
+        return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/tournaments/last");
     }
 }
