@@ -31,10 +31,13 @@ public class TennisApplication implements CommandLineRunner{
 	}
 
 	@Override
-	public void run(String... args) throws IOException {
-		if(playerService.getAllPlayers().size() == 0){
+	public void run(String... args) throws IOException, InterruptedException {
+
+		//playerService.updateRanking();
+
+		/*if(playerService.getAllPlayers().size() == 0){
 			playerService.savePlayersFromFile();
-		}
+		}*/
 
 	}
 }

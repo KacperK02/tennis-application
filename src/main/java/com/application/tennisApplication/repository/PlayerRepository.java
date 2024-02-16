@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
     List<Player> findByGender(String gender);
+    Player getPlayerByTeamid(int teamId);
 }

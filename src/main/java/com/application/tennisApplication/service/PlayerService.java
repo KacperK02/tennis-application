@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlayerService {
-    public void savePlayersFromFile() throws IOException;
-    public List<Player> getAllPlayers();
+    void savePlayersFromFile() throws IOException;
+    List<Player> getAllPlayers();
 
-    public List<Player> getAllWTAPlayers();
-    public List<Player> getAllATPPlayers();
+    List<Player> getAllWTAPlayers();
+    List<Player> getAllATPPlayers();
 
-    public Optional<Player> getPlayerById(int id);
+    Optional<Player> getPlayerById(int id);
+
+    void updateRanking() throws IOException, InterruptedException;
 }
