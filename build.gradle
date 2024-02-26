@@ -23,6 +23,11 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+	testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: '1.10.2'
+	testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-engine', version: '1.10.2'
+
 }
 
 tasks.named('test') {
