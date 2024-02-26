@@ -6,6 +6,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class APIConnection {
 
@@ -56,5 +59,25 @@ public class APIConnection {
 
     public String getPlayerLastTournaments(String teamId) throws IOException, InterruptedException {
         return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/tournaments/last");
+    }
+
+    public void getPlayerPhoto(String teamId) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/image"))
+                .header("X-RapidAPI-Key", APIkey)
+                .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+        byte[] imageBytes = response.body();
+        String filePath = "src/main/resources/static/playerPhotos/" + teamId + ".png";
+        Path path = Paths.get(filePath);
+        Files.write(path, imageBytes);
+    }
+
+    public String getPlayerNearEvent(String teamId) throws IOException, InterruptedException {
+        return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/events/near");
     }
 }

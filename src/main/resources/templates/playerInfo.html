@@ -21,6 +21,7 @@
 </header>
 
 <section class="about-section">
+    <img th:src="@{/playerPhotos/__${player.teamid}__.png}"  alt="photoOfThePlayer" />
     <p><b>Szczegółowe informacje o zawodniku</b></p>
     <p>Imię i nazwisko: <span th:text="${player.name}"></span></p>
     <p>Kraj: <span th:text="${player.country}"></span></p>
@@ -29,6 +30,54 @@
     <p>Rozegrane turnieje: <span th:text="${player.tournamentsPlayed}"></span></p>
 </section>
 
+<table class="match-table" style="margin-bottom: 30px">
+    <tr>
+        <th>Wynik ostatniego meczu</th>
+    </tr>
+    <tr>
+        <td><b>Turniej</b></td>
+        <td th:text="${match.nameOfTournament}"></td>
+    </tr>
+    <tr>
+        <td><b>Ranga turnieju</b></td>
+        <td th:text="${match.rankOfTournament}"></td>
+    </tr>
+    <tr>
+        <td><b>Runda</b></td>
+        <td th:text="${match.round}"></td>
+    </tr>
+    <tr>
+        <td><b>Status</b></td>
+        <td th:text="${match.status}"></td>
+    </tr>
+    <tr>
+        <td>-------------------</td>
+        <td>Set 1</td>
+        <td>Set 2</td>
+        <td th:unless="${match.firstPlayerScore[2] == 0 && match.secondPlayerScore[2] == 0}">Set 3</td>
+        <td th:unless="${match.firstPlayerScore[3] == 0 && match.secondPlayerScore[3] == 0}">Set 4</td>
+        <td th:unless="${match.firstPlayerScore[4] == 0 && match.secondPlayerScore[4] == 0}">Set 5</td>
+        <td>Zwycięzca</td>
+    </tr>
+    <tr>
+        <td th:text="${match.firstPlayerInfo[0]} + ' (' + ${match.firstPlayerInfo[2]} + '), ' + ${match.firstPlayerInfo[1]}"></td>
+        <td th:text="${match.firstPlayerScore[0]}"></td>
+        <td th:text="${match.firstPlayerScore[1]}"></td>
+        <td th:unless="${match.firstPlayerScore[2] == 0 && match.secondPlayerScore[2] == 0}" th:text="${match.firstPlayerScore[2]}"></td>
+        <td th:unless="${match.firstPlayerScore[3] == 0 && match.secondPlayerScore[3] == 0}" th:text="${match.firstPlayerScore[3]}"></td>
+        <td th:unless="${match.firstPlayerScore[4] == 0 && match.secondPlayerScore[4] == 0}" th:text="${match.firstPlayerScore[4]}"></td>
+        <td th:if="${match.winner == 1}">V</td>
+    </tr>
+    <tr>
+        <td th:text="${match.secondPlayerInfo[0]} + ' (' + ${match.secondPlayerInfo[2]} + '), ' + ${match.secondPlayerInfo[1]}"></td>
+        <td th:text="${match.secondPlayerScore[0]}"></td>
+        <td th:text="${match.secondPlayerScore[1]}"></td>
+        <td th:unless="${match.firstPlayerScore[2] == 0 && match.secondPlayerScore[2] == 0}" th:text="${match.secondPlayerScore[2]}"></td>
+        <td th:unless="${match.firstPlayerScore[3] == 0 && match.secondPlayerScore[3] == 0}" th:text="${match.secondPlayerScore[3]}"></td>
+        <td th:unless="${match.firstPlayerScore[4] == 0 && match.secondPlayerScore[4] == 0}" th:text="${match.secondPlayerScore[4]}"></td>
+        <td th:if="${match.winner == 2}">V</td>
+    </tr>
+</table>
 
 <table class="table" style="margin-bottom: 30px">
     <tr>
@@ -45,7 +94,6 @@
         <td th:text="${tournament.round}"></td>
     </tr>
 </table>
-
 
 
 </body>

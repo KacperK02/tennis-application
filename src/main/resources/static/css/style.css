@@ -79,3 +79,7 @@ footer {
 .separator{
     height: 50px;
 }
+
+.match-table, th, td{
+    border: 1px solid black;
+}

@@ -86,11 +86,14 @@ public class PlayerServiceImpl implements PlayerService{
                 int teamid = jsonNode.path("rankings").get(i).path("team").path("id").asInt();
 
                 Player player = playerRepository.getPlayerByTeamid(teamid);
-                player.setRanking(ranking);
-                player.setCountry(country);
-                player.setPoints(points);
-                player.setTournamentsPlayed(tournamentsPlayed);
-                playerRepository.save(player);
+                if (player != null){
+                    player.setRanking(ranking);
+                    player.setCountry(country);
+                    player.setPoints(points);
+                    player.setTournamentsPlayed(tournamentsPlayed);
+                    playerRepository.save(player);
+                }
+
             }
             jsonNode = objectMapper.readTree(new File("src/main/resources/API/ATPranking.json"));
         }
