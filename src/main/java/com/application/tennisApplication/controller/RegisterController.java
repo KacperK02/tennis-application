@@ -30,6 +30,16 @@ public class RegisterController {
             return "register";
         }
 
+        if(!userService.isPasswordValid(user.getPassword())){
+            model.addAttribute("error", "Hasło musi zawierać co najmniej 8 znaków, jedną małą i jedną dużą literę oraz znak specjalny");
+            return "register";
+        }
+
+        if(!userService.isEmailValid(user.getEmail())){
+            model.addAttribute("error", "Podany adres email jest niepoprawny");
+            return "register";
+        }
+
         userService.saveUser(user);
         model.addAttribute("registration_completed", "Konto zostało utworzone pomyślnie! Możesz się teraz zalogować.");
         return "index";
