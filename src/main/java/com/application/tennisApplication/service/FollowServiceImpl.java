@@ -8,11 +8,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class FollowServiceImpl implements FollowService{
 
     @Autowired
     private FollowRepository followRepository;
+
+    @Autowired
+    private PlayerService playerService;
 
     @Override
     public List<Player> getFollowedPlayers(int userId) {
@@ -36,5 +41,19 @@ public class FollowServiceImpl implements FollowService{
             }
         }
         return false;
+    }
+
+    @Override
+    public void deleteFollowsOfPlayer(Player player) {
+        List<Follow> follows = followRepository.findAll();
+        Optional<Player> players = playerService.getPlayerById(player.getPlayerID());
+        if (players.isPresent()){
+            for (Follow follow : follows) {
+                if (follow.getPlayer().getPlayerID() == player.getPlayerID()) {
+                    followRepository.delete(follow);
+                }
+            }
+        }
+
     }
 }

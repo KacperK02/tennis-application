@@ -26,7 +26,7 @@
 
 <section class="login-section">
     <div th:if="${registration_completed}">[[${registration_completed}]]</div>
-    <div th:if="${user_not_logged}">
+    <div th:unless="${user_logged}">
         <!-- Formularz logowania dla niezalogowanych użytkowników -->
         <form th:action="@{/login}" th:object="${user}" method="post">
             <div>

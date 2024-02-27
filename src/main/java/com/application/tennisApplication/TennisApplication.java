@@ -1,6 +1,5 @@
 package com.application.tennisApplication;
 
-import com.application.tennisApplication.API.APIConnection;
 import com.application.tennisApplication.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,16 +15,7 @@ public class TennisApplication implements CommandLineRunner{
 	@Autowired
 	private PlayerService playerService;
 
-	public static void main(String[] args) throws IOException{
-
-		/*APIConnection apiConnection = new APIConnection();
-		try{
-			apiConnection.getWTARanking();
-			apiConnection.getATPRanking();
-		}
-		catch(InterruptedException e){
-			System.out.println("Failed to get WTA Ranking");
-		}*/
+	public static void main(String[] args) {
 
 		SpringApplication.run(TennisApplication.class, args);
 	}
@@ -34,10 +24,6 @@ public class TennisApplication implements CommandLineRunner{
 	public void run(String... args) throws IOException, InterruptedException {
 
 		//playerService.updateRanking();
-
-		/*if(playerService.getAllPlayers().size() == 0){
-			playerService.savePlayersFromFile();
-		}*/
 
 	}
 }

@@ -12,11 +12,9 @@ public class IndexController {
     @GetMapping("/")
     public String index1(Model model, HttpSession session){
         if (session.getAttribute("user") == null){
-            model.addAttribute("user_not_logged", true);
             model.addAttribute("user_logged", false);
         }
         else{
-            model.addAttribute("user_not_logged", false);
             model.addAttribute("user_logged", true);
         }
         return "index";
@@ -25,11 +23,9 @@ public class IndexController {
     @GetMapping("index")
     public String index2(Model model, HttpSession session){
         if (session.getAttribute("user") == null){
-            model.addAttribute("user_not_logged", true);
             model.addAttribute("user_logged", false);
         }
         else{
-            model.addAttribute("user_not_logged", false);
             model.addAttribute("user_logged", true);
         }
         return "index";
@@ -43,7 +39,6 @@ public class IndexController {
     @PostMapping("/logout")
     public String logout(Model model, HttpSession session){
         session.invalidate();
-        model.addAttribute("user_not_logged", true);
         model.addAttribute("user_logged", false);
         return "index";
     }

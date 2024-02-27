@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlayerService {
-    void savePlayersFromFile() throws IOException;
     List<Player> getAllPlayers();
 
     List<Player> getAllWTAPlayers();
