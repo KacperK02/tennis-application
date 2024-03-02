@@ -27,7 +27,7 @@
 <section class="login-section">
     <div th:if="${registration_completed}">[[${registration_completed}]]</div>
     <div th:unless="${user_logged}">
-        <!-- Formularz logowania dla niezalogowanych użytkowników -->
+        <div style="margin-bottom: 20px;">Zaloguj się, by uzyskać szczegółowe informacje o swoich ulubionych graczach. Nie masz konta? Możesz założyć je całkowicie za darmo!</div>
         <form th:action="@{/login}" th:object="${user}" method="post">
             <div>
                 <label for="email">Email:</label>
@@ -45,12 +45,15 @@
         </form>
     </div>
     <div th:if="${user_logged}">
-        <!-- Przycisk "Wyloguj się" dla zalogowanych użytkowników -->
+        Jesteś zalogowany. Wylogować się możesz za pomocą tego przycisku ->
         <form th:action="@{/logout}" method="post">
             <button type="submit">Wyloguj się</button>
         </form>
     </div>
 </section>
+
+<div id="logo"><img src="logo.png" alt="Logo"/></div>
+
 
 <footer>
     <p>&copy; 2024 StrefaTenisa.pl. Wszelkie prawa zastrzeżone.</p>
