@@ -5,7 +5,6 @@ import com.application.tennisApplication.model.Match;
 import com.application.tennisApplication.model.Player;
 import com.application.tennisApplication.model.Tournament;
 import com.application.tennisApplication.model.User;
-import com.application.tennisApplication.repository.FollowRepository;
 import com.application.tennisApplication.repository.PlayerRepository;
 import com.application.tennisApplication.service.FollowService;
 import com.application.tennisApplication.service.PlayerService;
@@ -29,22 +28,12 @@ public class PlayerController {
     PlayerController playerController;
     @Autowired
     PlayerService playerService;
-
     @Autowired
     PlayerRepository playerRepository;
-
-    @Autowired
-    FollowRepository followRepository;
-
     @Autowired
     FollowService followService;
 
-    @GetMapping("/WTARanking")
-    public String showWTAPlayers(Model model, HttpSession session){
-        List<Player> players = playerService.getAllWTAPlayers();
-
-        User user = (User) session.getAttribute("user");
-
+    private void setFollowingOfPlayers(User user, List<Player> players){
         boolean isFollowing = false;
         for (Player player : players){
             if (user != null) {
@@ -54,6 +43,14 @@ public class PlayerController {
         }
 
         players.sort(Comparator.comparingInt(Player::getRanking));
+    }
+
+    @GetMapping("/WTARanking")
+    public String showWTAPlayers(Model model, HttpSession session){
+        List<Player> players = playerService.getAllWTAPlayers();
+
+        User user = (User) session.getAttribute("user");
+        setFollowingOfPlayers(user, players);
 
         model.addAttribute("players", players);
         return "WTARanking";
@@ -64,23 +61,14 @@ public class PlayerController {
         List<Player> players = playerService.getAllATPPlayers();
 
         User user = (User) session.getAttribute("user");
-
-        boolean isFollowing = false;
-        for (Player player : players){
-            if (user != null) {
-                isFollowing = followService.isPlayerFollowedByUser(player.getPlayerID(), user.getUserID());
-            }
-            player.setFollowing(isFollowing);
-        }
-
-        players.sort(Comparator.comparingInt(Player::getRanking));
+        setFollowingOfPlayers(user, players);
 
         model.addAttribute("players", players);
         return "ATPRanking";
     }
 
     @GetMapping("/playerInfo")
-    public String playerInfo(@RequestParam("playerID") int playerId, Model model) throws IOException, InterruptedException {
+    public String playerInfo(@RequestParam("playerID") int playerId, Model model) throws IOException {
         Optional<Player> playerOptional = playerService.getPlayerById(playerId);
         if (playerOptional.isPresent()){
             Player player = playerOptional.get();

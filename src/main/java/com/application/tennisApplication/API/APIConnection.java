@@ -25,17 +25,24 @@ public class APIConnection {
         }
     }
 
-    private String getResponseFromAPI(String url) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("X-RapidAPI-Key", APIkey)
-                .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
+    private String getResponseFromAPI(String url){
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("X-RapidAPI-Key", APIkey)
+                    .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
+                    .method("GET", HttpRequest.BodyPublishers.noBody())
+                    .build();
 
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-        return response.body();
+            return response.body();
+        }
+        catch(Exception e){
+            System.out.println("Failed to get data from API. " + e);
+            return "Error";
+        }
+
     }
 
     private void saveRankingToJSON(String name, String response){
@@ -47,37 +54,43 @@ public class APIConnection {
         }
     }
 
-    public void getWTARanking() throws IOException, InterruptedException {
+    public void getWTARanking() {
         String response = getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/rankings/wta");
         saveRankingToJSON("src/main/resources/API/WTAranking.json", response);
     }
 
-    public void getATPRanking() throws IOException, InterruptedException {
+    public void getATPRanking() {
         String response = getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/rankings/atp");
         saveRankingToJSON("src/main/resources/API/ATPranking.json", response);
     }
 
-    public String getPlayerLastTournaments(String teamId) throws IOException, InterruptedException {
+    public String getPlayerLastTournaments(String teamId) {
         return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/tournaments/last");
     }
 
-    public void getPlayerPhoto(String teamId) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/image"))
-                .header("X-RapidAPI-Key", APIkey)
-                .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
+    public void getPlayerPhoto(String teamId) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/image"))
+                    .header("X-RapidAPI-Key", APIkey)
+                    .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
+                    .method("GET", HttpRequest.BodyPublishers.noBody())
+                    .build();
 
-        HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-        byte[] imageBytes = response.body();
-        String filePath = "src/main/resources/static/playerPhotos/" + teamId + ".png";
-        Path path = Paths.get(filePath);
-        Files.write(path, imageBytes);
+            byte[] imageBytes = response.body();
+            String filePath = "src/main/resources/static/playerPhotos/" + teamId + ".png";
+            Path path = Paths.get(filePath);
+            Files.write(path, imageBytes);
+        }
+        catch (Exception e){
+            System.out.println("Failed to get data from API. " + e);
+        }
+
     }
 
-    public String getPlayerNearEvent(String teamId) throws IOException, InterruptedException {
+    public String getPlayerNearEvent(String teamId) {
         return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/events/near");
     }
 }

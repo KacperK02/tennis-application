@@ -8,11 +8,8 @@ import java.util.Optional;
 
 public interface PlayerService {
     List<Player> getAllPlayers();
-
     List<Player> getAllWTAPlayers();
     List<Player> getAllATPPlayers();
-
     Optional<Player> getPlayerById(int id);
-
     void updateRanking() throws IOException, InterruptedException;
 }

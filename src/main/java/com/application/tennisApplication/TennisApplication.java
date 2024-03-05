@@ -7,8 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
-import java.io.IOException;
-
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class TennisApplication implements CommandLineRunner{
 
@@ -21,9 +19,14 @@ public class TennisApplication implements CommandLineRunner{
 	}
 
 	@Override
-	public void run(String... args) throws IOException, InterruptedException {
+	public void run(String... args) {
 
-		//playerService.updateRanking();
+		/*try{
+			playerService.updateRanking();
+		} catch (Exception e) {
+			System.out.println("Cannot update ranking. " + e);
+		}*/
+
 
 	}
 }

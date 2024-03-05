@@ -41,7 +41,7 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
     @Override
-    public void updateRanking() throws IOException, InterruptedException {
+    public void updateRanking() throws IOException {
         List <Player> oldRankingPlayers = getAllPlayers();
         List <Player> newRankingPlayers = new ArrayList<>();
         APIConnection apiConnection = new APIConnection();

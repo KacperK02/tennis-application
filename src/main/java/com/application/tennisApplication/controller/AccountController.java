@@ -27,7 +27,6 @@ public class AccountController {
         }
         else{
             model.addAttribute("login_error", "Najpierw musisz się zalogować na swoje konto.");
-            model.addAttribute("user_not_logged", true);
             model.addAttribute("user_logged", false);
             return "index";
         }
