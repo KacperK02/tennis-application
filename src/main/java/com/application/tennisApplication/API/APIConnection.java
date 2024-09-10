@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.GZIPInputStream;
 
 public class APIConnection {
 
@@ -29,14 +30,32 @@ public class APIConnection {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .header("X-RapidAPI-Key", APIkey)
-                    .header("X-RapidAPI-Host", "tennisapi1.p.rapidapi.com")
+                    .header("x-rapidapi-key", APIkey)
+                    .header("x-rapidapi-host", "tennisapi1.p.rapidapi.com")
                     .method("GET", HttpRequest.BodyPublishers.noBody())
                     .build();
 
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
+            String encoding = response.headers().firstValue("Content-Encoding").orElse("identity");
 
-            return response.body();
+            byte[] responseBody = response.body();
+            String decodedResponse;
+
+            if ("gzip".equalsIgnoreCase(encoding)) {
+                try (GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(responseBody));
+                     BufferedReader bf = new BufferedReader(new InputStreamReader(gis, StandardCharsets.UTF_8))) {
+                    StringBuilder output = new StringBuilder();
+                    String line;
+                    while ((line = bf.readLine()) != null) {
+                        output.append(line);
+                    }
+                    decodedResponse = output.toString();
+                }
+            } else {
+                decodedResponse = new String(responseBody, StandardCharsets.UTF_8);
+            }
+
+            return decodedResponse;
         }
         catch(Exception e){
             System.out.println("Failed to get data from API. " + e);

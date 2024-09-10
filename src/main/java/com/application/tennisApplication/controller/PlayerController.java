@@ -117,7 +117,7 @@ public class PlayerController {
             int points;
             String rank;
             if (node.path("uniqueTournament").path("tennisPoints").isMissingNode()){
-                rank = "brak danych";
+                rank = "-";
             } else {
                 points = node.path("uniqueTournament").path("tennisPoints").asInt();
                 if (points == 2000) rank = "Wielki Szlem";

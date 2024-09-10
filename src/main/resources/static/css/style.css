@@ -69,12 +69,14 @@ button {
 
 footer {
     background-color: #d46110;
-    color: #fff;
+    color: white;
     text-align: center;
-    position: fixed;
+    font-weight: bold;
     width: 100%;
-    bottom: 0;
-    margin-top: 30px;
+    margin: 20px 0 0 0;
+    padding: 10px;
+    position: relative;
+    height: 50px;
 }
 
 table {
