@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Controller
+@CrossOrigin
 public class PlayerController {
 
     @Autowired
@@ -45,30 +46,25 @@ public class PlayerController {
         players.sort(Comparator.comparingInt(Player::getRanking));
     }
 
-    @GetMapping("/WTARanking")
-    public String showWTAPlayers(Model model, HttpSession session){
-        List<Player> players = playerService.getAllWTAPlayers();
-
-        User user = (User) session.getAttribute("user");
-        setFollowingOfPlayers(user, players);
-
-        model.addAttribute("players", players);
-        return "WTARanking";
+    @GetMapping("/getAllWTAPlayers")
+    @ResponseBody
+    public List<Player> getWTAPlayers(){
+        List <Player> players = playerService.getAllWTAPlayers();
+        players.sort(Comparator.comparingInt(Player::getRanking));
+        return players;
     }
 
-    @GetMapping("/ATPRanking")
-    public String showATPPlayers(Model model, HttpSession session){
-        List<Player> players = playerService.getAllATPPlayers();
-
-        User user = (User) session.getAttribute("user");
-        setFollowingOfPlayers(user, players);
-
-        model.addAttribute("players", players);
-        return "ATPRanking";
+    @GetMapping("/getAllATPPlayers")
+    @ResponseBody
+    public List<Player> getATPPlayers(){
+        List <Player> players = playerService.getAllATPPlayers();
+        players.sort(Comparator.comparingInt(Player::getRanking));
+        return players;
     }
 
-    @GetMapping("/playerInfo")
-    public String playerInfo(@RequestParam("playerID") int playerId, Model model) throws IOException {
+    @GetMapping("/getPlayerInfo")
+    @ResponseBody
+    public Player playerInfo(@RequestParam("playerID") int playerId, Model model) throws IOException {
         Optional<Player> playerOptional = playerService.getPlayerById(playerId);
         if (playerOptional.isPresent()){
             Player player = playerOptional.get();
@@ -90,8 +86,10 @@ public class PlayerController {
             model.addAttribute("tournaments", tournaments);
             model.addAttribute("match", lastMatch);
             model.addAttribute("player", player);
+
+            return player; //zwraca tylko dane gracza, prawdopodobnie trzeba zrobić osobne endpointy dla meczu i turnieju
         }
-        return "playerInfo";
+        return null;
     }
 
     private List<Tournament> getPlayerTournaments(String response) throws IOException {
