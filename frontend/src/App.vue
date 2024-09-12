@@ -4,6 +4,7 @@
       <router-link to="/">Home</router-link>
       <router-link to="/WTARanking">Ranking WTA</router-link>
       <router-link to="/ATPRanking">Ranking ATP</router-link>
+      <router-link to="/account">Twoje Konto</router-link>
     </nav>
     <router-view></router-view>
   </div>

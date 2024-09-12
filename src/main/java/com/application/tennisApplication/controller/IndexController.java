@@ -36,10 +36,4 @@ public class IndexController {
         return "register";
     }
 
-    @PostMapping("/logout")
-    public String logout(Model model, HttpSession session){
-        session.invalidate();
-        model.addAttribute("user_logged", false);
-        return "index";
-    }
 }
