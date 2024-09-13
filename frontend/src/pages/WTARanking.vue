@@ -11,6 +11,8 @@
 import axios from 'axios';
 import RankingCard from '../components/RankingCard.vue';
 
+import '../css/ranking.css'
+
 export default {
   data() {
     return {
@@ -30,12 +32,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.ranking-list {
-  display: block;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 20px;
-}
-</style>

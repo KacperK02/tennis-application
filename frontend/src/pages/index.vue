@@ -1,17 +1,24 @@
 <template>
   <div>
-    <h1>Welcome to the Home Page</h1>
+    <h2>Witaj w Strefie Tenisa!</h2>
 
-    <div v-if="loginError" style="color:red">
+    <p>Najlepszy serwis dla polskich fanów tenisa! Obserwuj swoich ulubionych zawodników i nie przegap żadnych informacji o ich meczach! Zajrzyj też do sekcji Artykuły, by być na bieżąco ze wszystkimi, co się dzieje w światowym tenisie! Załóż konto już dziś!</p>
+
+    <div v-if="loginError" class="error-message">
       {{ loginError }}
     </div>
 
-    <div v-if="registrationSuccess" style="color:green">
+    <div v-if="errorMessage" class="error-message">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <div v-if="registrationSuccess" class="success-message">
       {{ registrationSuccess }}
     </div>
 
     <!-- Sprawdzenie, czy użytkownik jest zalogowany -->
     <div v-if="!isLoggedIn">
+      <h2>Logowanie</h2>
       <form @submit.prevent="login">
         <div>
           <label>Email:</label>
@@ -34,13 +41,15 @@
       <button @click="logout">Wyloguj się</button>
     </div>
 
-    <div v-if="errorMessage">
-      <p style="color:red">{{ errorMessage }}</p>
-    </div>
   </div>
+
+  <img src="@/assets/logo.png" alt="Logo" class="logo" />
+  
 </template>
 
 <script>
+import '../css/index.css'
+
 export default {
   data() {
     return {
