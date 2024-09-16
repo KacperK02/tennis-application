@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,36 @@ public class PlayerController {
         players.sort(Comparator.comparingInt(Player::getRanking));
         return players;
     }
+
+    @GetMapping("/player/{id}")
+    public ResponseEntity<Player> getPlayerById(@PathVariable int id) {
+        Optional<Player> playerOptional = playerService.getPlayerById(id);
+        if (playerOptional.isPresent()) {
+            Player player = playerOptional.get();
+            return ResponseEntity.ok(player);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/player/photoExists/{teamID}")
+    public ResponseEntity<Boolean> checkPhotoExists(@PathVariable String teamID) {
+        String photoPath = "frontend/src/assets/playerPhotos/" + teamID + ".png";
+        File file = new File(photoPath);
+        if (file.exists()) {
+            return ResponseEntity.ok(true);  // Zdjęcie istnieje
+        } else {
+            return ResponseEntity.ok(false);  // Zdjęcie nie istnieje
+        }
+    }
+
+    @PostMapping("/player/fetchPhoto/{teamID}")
+    public ResponseEntity<Void> fetchPlayerPhoto(@PathVariable String teamID) {
+        APIConnection apiConnection = new APIConnection();
+        apiConnection.getPlayerPhoto(teamID);
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/getPlayerInfo")
     @ResponseBody

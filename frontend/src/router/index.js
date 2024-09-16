@@ -4,6 +4,7 @@ import WTARanking from '@/pages/WTARanking.vue';
 import ATPRanking from '@/pages/ATPRanking.vue';
 import Account from '@/pages/account.vue';
 import RegisterView from '@/pages/register.vue';
+import playerDetails from '@/pages/playerDetails.vue';
 
 const routes = [
   {
@@ -31,6 +32,12 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: RegisterView
+  },
+  {
+    path: '/player/:id',  // Ścieżka z dynamicznym parametrem id
+    name: 'player-details',
+    component: playerDetails,
+    props: true  // Pozwala przekazać ID zawodnika jako props
   }
 ];
 
