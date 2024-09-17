@@ -1,33 +1,79 @@
 <template>
-    <div class="card">
-      <p>{{ player.ranking }}.</p>
-      <p class="name">{{ player.name }}</p>
-      <p>{{ player.country }}</p>
-      <p>{{ player.tournamentsPlayed }}</p>
-      <p>{{ player.points }}</p>
-      <button @click="followPlayer">{{ isFollowing ? 'Obserwujesz' : 'Obserwuj' }}</button>
-    </div>
-</template>
-  
-<script>
-  import '../css/rankingCard.css'
+  <div class="card">
+    <p class="ranking">{{ player.ranking }}.</p>
+    <p class="name">{{ player.name }}</p>
+    <p class="country">{{ player.country }}</p>
+    <p class="points">{{ player.points }}</p>
 
-  export default {
-    props: {
-      player: Object
-    },
-    data() {
+    <!-- Dynamiczny przycisk Obserwuj / Obserwujesz -->
+    <button v-if="!isFollowing" @click="handleFollow">Obserwuj</button>
+    <p v-else class="isFollowing">Obserwujesz</p>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+import '../css/rankingCard.css'
+
+export default {
+  props: {
+    player: Object
+  },
+  data() {
     return {
-      isFollowing: false // Flaga czy gracz jest obserwowany
+      isFollowing: false // Flaga, czy gracz jest obserwowany
     };
   },
+  mounted() {
+    this.checkIfFollowing(); // Sprawdź, czy użytkownik obserwuje zawodnika
+  },
   methods: {
+    checkIfFollowing() {
+      axios.get('http://localhost:8080/follow/isFollowing/' + this.player.playerID, {
+        withCredentials: true // Przesyłaj ciasteczka (sesję)
+      })
+        .then(response => {
+          this.isFollowing = response.data; // Ustaw stan obserwowania
+        })
+        .catch(error => {
+          console.error('Błąd podczas sprawdzania obserwowania:', error);
+        });
+    },
+    handleFollow() {
+      // Sprawdź, czy użytkownik jest zalogowany
+      axios.get('http://localhost:8080/checkSession', {
+        withCredentials: true // Umożliwia przesyłanie ciasteczek sesji
+      })
+      .then(response => {
+        if (response.data.loggedIn) {
+          this.followPlayer(); // Użytkownik jest zalogowany, kontynuuj
+        } else {
+          alert("Musisz być zalogowany, aby obserwować gracza.") // Użytkownik nie jest zalogowany
+        }
+      })
+      .catch(error => {
+        console.error('Błąd podczas sprawdzania sesji:', error);
+      });
+    },
     followPlayer() {
-      this.isFollowing = !this.isFollowing; // Przełącz stan obserwowania
+      axios.post('http://localhost:8080/follow/followPlayer', 
+      JSON.stringify(this.player.playerID),  // Wysyłanie danych w formacie JSON
+      {
+      headers: {
+        'Content-Type': 'application/json' // Ustawienie nagłówka
+        },
+      withCredentials: true // Przesyłaj ciasteczka sesji
+        }
+        )
+        .then(() => {
+          this.isFollowing = true; // Ustaw stan na "obserwowany"
+        })
+        .catch(error => {
+          console.error('Błąd podczas obserwowania zawodnika:', error);
+        });
     }
   },
-    name: 'RankingCard'
-  };
+  name: 'RankingCard'
+};
 </script>
-
-  

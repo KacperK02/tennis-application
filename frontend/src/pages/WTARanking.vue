@@ -20,15 +20,16 @@ export default {
     };
   },
   mounted() {
-    axios.get('http://localhost:8080/getAllWTAPlayers')
+    axios.get('http://localhost:8080/getAllWTAPlayers', {
+      withCredentials: true
+    })
       .then(response => {
         this.players = response.data;
       });
   },
   components: {
-    RankingCard // Dodaj komponent do rejestru komponentów
+    RankingCard
   },
   name: 'WTARanking'
 };
 </script>
-

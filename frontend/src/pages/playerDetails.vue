@@ -5,7 +5,7 @@
       <p><strong>Kraj:</strong> {{ player.country }}</p>
       <p><strong>Ranking:</strong> {{ player.ranking }}</p>
       <p><strong>Punkty:</strong> {{ player.points }}</p>
-      <button @click="goBack">Przestań obserwować</button>
+      <button @click="stopFollow">Przestań obserwować</button>
     </div>
     <div v-else>
       <p>Ładowanie danych zawodnika...</p>
@@ -15,11 +15,11 @@
   <script>
   export default {
     props: {
-      id: String // ID zawodnika przekazane jako props
+      id: String
     },
     data() {
       return {
-        player: null  // Obiekt, który będzie przechowywał dane zawodnika
+        player: null
       };
     },
     mounted() {
@@ -48,9 +48,22 @@
           console.error('Błąd:', error);
         }
       },
-      goBack() {
-        this.$router.go(-1);  // Przekieruj użytkownika z powrotem
-      }
+      stopFollow() {
+        fetch(`http://localhost:8080/follow/deleteFollow/${this.player.playerID}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        })
+        .then(response => {
+          if (response.ok) {
+            this.$router.push('/account'); 
+          } else {
+            console.error('Błąd podczas usuwania zawodnika z obserwowanych.');
+          }
+        })
+        .catch(error => {
+          console.error('Błąd:', error);
+        });
+    }
     }
   };
   </script>
