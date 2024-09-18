@@ -1,0 +1,71 @@
+.player-info {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .player-details, .match-table-container {
+    width: 48%;
+  }
+
+  .last-tournaments-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .match-table, .tournaments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .match-table th, .tournaments-table th, .match-table td, .tournaments-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .match-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+
+  .tournaments-table th {
+    background-color: #f2f2f2;
+    text-align: center;
+  }
+  
+  .match-table tr:nth-child(even), .tournaments-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .match-table tr:hover, .tournaments-table tr:hover {
+    background-color: #ddd;
+  }
+
+  .winner {
+    font-weight: bold;
+  }
+  
+  img {
+    max-width: 150px;
+    height: auto;
+  }
+  
+  button {
+    width: 200px;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: rgb(231, 150, 0);
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #d1900d;
+  }

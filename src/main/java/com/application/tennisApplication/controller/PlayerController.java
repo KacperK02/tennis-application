@@ -69,9 +69,34 @@ public class PlayerController {
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
             return ResponseEntity.ok(player);
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/player/{id}/lastMatch")
+    public ResponseEntity<Match> getLastPlayerMatch(@PathVariable int id) throws JsonProcessingException {
+        Optional<Player> playerOptional = playerService.getPlayerById(id);
+        if (playerOptional.isPresent()) {
+            Player player = playerOptional.get();
+            APIConnection apiConnection = new APIConnection();
+            String response = apiConnection.getPlayerNearEvent(String.valueOf(player.getTeamid()));
+            Match lastMatch = lastPlayerMatch(response);
+            return ResponseEntity.ok(lastMatch);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/player/{id}/lastTournaments")
+    public ResponseEntity<List<Tournament>> getPlayerLastTournaments(@PathVariable int id) throws IOException {
+        Optional<Player> playerOptional = playerService.getPlayerById(id);
+        if (playerOptional.isPresent()) {
+            Player player = playerOptional.get();
+            APIConnection apiConnection = new APIConnection();
+            String response = apiConnection.getPlayerLastTournaments(String.valueOf(player.getTeamid()));
+            List <Tournament> tournaments = getPlayerTournaments(response);
+            return ResponseEntity.ok(tournaments);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/player/photoExists/{teamID}")
@@ -90,37 +115,6 @@ public class PlayerController {
         APIConnection apiConnection = new APIConnection();
         apiConnection.getPlayerPhoto(teamID);
         return ResponseEntity.ok().build();
-    }
-
-
-    @GetMapping("/getPlayerInfo")
-    @ResponseBody
-    public Player playerInfo(@RequestParam("playerID") int playerId, Model model) throws IOException {
-        Optional<Player> playerOptional = playerService.getPlayerById(playerId);
-        if (playerOptional.isPresent()){
-            Player player = playerOptional.get();
-
-            APIConnection apiConnection = new APIConnection();
-            String response = apiConnection.getPlayerLastTournaments(String.valueOf(player.getTeamid()));
-            List <Tournament> tournaments = getPlayerTournaments(response);
-
-            File folder = new File("src/main/resources/static/playerPhotos");
-            String teamId = String.valueOf(player.getTeamid());
-            File photo = new File(folder,teamId + ".png");
-            if (!photo.exists()){
-                apiConnection.getPlayerPhoto(teamId);
-            }
-
-            response = apiConnection.getPlayerNearEvent(String.valueOf(player.getTeamid()));
-            Match lastMatch = lastPlayerMatch(response);
-
-            model.addAttribute("tournaments", tournaments);
-            model.addAttribute("match", lastMatch);
-            model.addAttribute("player", player);
-
-            return player; //zwraca tylko dane gracza, prawdopodobnie trzeba zrobić osobne endpointy dla meczu i turnieju
-        }
-        return null;
     }
 
     private List<Tournament> getPlayerTournaments(String response) throws IOException {
