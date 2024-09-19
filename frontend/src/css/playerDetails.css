@@ -1,6 +1,7 @@
 .player-info {
     width: 100%;
     max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -8,12 +9,12 @@
   }
   
   .player-details, .match-table-container {
-    width: 48%;
+    width: 50%;
+    margin: 0 auto;
   }
 
   .last-tournaments-container {
-    width: 100%;
-    max-width: 600px;
+    width: 40%;
     margin: 0 auto;
   }
   
@@ -41,10 +42,6 @@
   
   .match-table tr:nth-child(even), .tournaments-table tr:nth-child(even) {
     background-color: #f9f9f9;
-  }
-  
-  .match-table tr:hover, .tournaments-table tr:hover {
-    background-color: #ddd;
   }
 
   .winner {

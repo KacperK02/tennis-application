@@ -11,11 +11,9 @@ import com.application.tennisApplication.service.PlayerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -73,15 +71,19 @@ public class PlayerController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/player/{id}/lastMatch")
-    public ResponseEntity<Match> getLastPlayerMatch(@PathVariable int id) throws JsonProcessingException {
+    @GetMapping("/player/{id}/getMatches")
+    public ResponseEntity<List<Match>> getPlayerMatches(@PathVariable int id) throws JsonProcessingException {
         Optional<Player> playerOptional = playerService.getPlayerById(id);
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
             APIConnection apiConnection = new APIConnection();
             String response = apiConnection.getPlayerNearEvent(String.valueOf(player.getTeamid()));
-            Match lastMatch = lastPlayerMatch(response);
-            return ResponseEntity.ok(lastMatch);
+            List<Match> matches = new ArrayList<>();
+            Match lastMatch = getPlayerMatch(response, "previous");
+            Match nextMatch = getPlayerMatch(response, "next");
+            matches.add(lastMatch);
+            matches.add(nextMatch);
+            return ResponseEntity.ok(matches);
         }
         return ResponseEntity.notFound().build();
     }
@@ -161,10 +163,18 @@ public class PlayerController {
         return playerInfo;
     }
 
-    private Match lastPlayerMatch(String response) throws JsonProcessingException {
+    private Match getPlayerMatch(String response, String whichMatch) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response);
-        JsonNode node = jsonNode.path("previousEvent");
+        JsonNode node;
+        if (Objects.equals(whichMatch, "previous")) {
+            node = jsonNode.path("previousEvent");
+        }
+        else {
+            node = jsonNode.path("nextEvent");
+        }
+
+        if (node.isEmpty()) return null;
 
         String nameOfTournament = node.path("season").path("name").asText();
         String rankOfTournament;
@@ -183,6 +193,10 @@ public class PlayerController {
         String seed2 = node.path("awayTeamSeed").asText();
         List<String> firstPlayerInfo = getPlayerInfo(player1, seed1);
         List<String> secondPlayerInfo = getPlayerInfo(player2, seed2);
+
+        if (Objects.equals(whichMatch, "next")) {
+            return new Match(nameOfTournament, rankOfTournament, round, status, firstPlayerInfo, secondPlayerInfo, -1, null, null);
+        }
 
         List <Integer> firstPlayerScore = new ArrayList<>();
         firstPlayerScore.add(node.path("homeScore").path("period1").asInt());

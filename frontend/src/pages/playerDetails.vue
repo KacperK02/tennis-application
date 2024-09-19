@@ -10,52 +10,51 @@
       <button @click="stopFollow">Przestań obserwować</button>
     </div>
 
-    <!-- Tabela z danymi o ostatnim meczu -->
     <div class="match-table-container">
       <h2>Ostatni mecz</h2>
-      <table v-if="lastMatch" class="match-table">
+      <table v-if="matches.length > 0 && matches[0]" class="match-table">
         <tr>
           <td><b>Turniej</b></td>
-          <td>{{ lastMatch.nameOfTournament }}</td>
+          <td>{{ matches[0].nameOfTournament }}</td>
         </tr>
         <tr>
           <td><b>Ranga</b></td>
-          <td>{{ lastMatch.rankOfTournament }}</td>
+          <td>{{ matches[0].rankOfTournament }}</td>
         </tr>
         <tr>
           <td><b>Runda</b></td>
-          <td>{{ lastMatch.round }}</td>
+          <td>{{ matches[0].round }}</td>
         </tr>
         <tr>
           <td><b>Status</b></td>
-          <td>{{ lastMatch.status }}</td>
+          <td>{{ matches[0].status }}</td>
         </tr>
         <tr>
           <td></td>
           <td></td>
           <td>Set 1</td>
           <td>Set 2</td>
-          <td v-if="lastMatch.firstPlayerScore[2] != 0 && lastMatch.secondPlayerScore[2] != 0">Set 3</td>
-          <td v-if="lastMatch.firstPlayerScore[3] != 0 && lastMatch.secondPlayerScore[3] != 0">Set 4</td>
-          <td v-if="lastMatch.firstPlayerScore[4] != 0 && lastMatch.secondPlayerScore[4] != 0">Set 5</td>
+          <td v-if="matches[0].firstPlayerScore[2] != 0 && matches[0].secondPlayerScore[2] != 0">Set 3</td>
+          <td v-if="matches[0].firstPlayerScore[3] != 0 && matches[0].secondPlayerScore[3] != 0">Set 4</td>
+          <td v-if="matches[0].firstPlayerScore[4] != 0 && matches[0].secondPlayerScore[4] != 0">Set 5</td>
         </tr>
-        <tr :class="{ 'winner': lastMatch.winner === 1 }">
+        <tr :class="{ 'winner': matches[0].winner === 1 }">
           <td></td>
-          <td>{{ lastMatch.firstPlayerInfo[0] + " (" + lastMatch.firstPlayerInfo[2] + ") " + lastMatch.firstPlayerInfo[1] }}</td>
-          <td>{{ lastMatch.firstPlayerScore[0] }}</td>
-          <td>{{ lastMatch.firstPlayerScore[1] }}</td>
-          <td v-if="lastMatch.firstPlayerScore[2] != 0 && lastMatch.secondPlayerScore[2] != 0">{{ lastMatch.firstPlayerScore[2] }}</td>
-          <td v-if="lastMatch.firstPlayerScore[3] != 0 && lastMatch.secondPlayerScore[3] != 0">{{ lastMatch.firstPlayerScore[3] }}</td>
-          <td v-if="lastMatch.firstPlayerScore[4] != 0 && lastMatch.secondPlayerScore[4] != 0">{{ lastMatch.firstPlayerScore[4] }}</td>
+          <td>{{ matches[0].firstPlayerInfo[0] + " (" + matches[0].firstPlayerInfo[2] + "), " + matches[0].firstPlayerInfo[1] }}</td>
+          <td>{{ matches[0].firstPlayerScore[0] }}</td>
+          <td>{{ matches[0].firstPlayerScore[1] }}</td>
+          <td v-if="matches[0].firstPlayerScore[2] != 0 && matches[0].secondPlayerScore[2] != 0">{{ matches[0].firstPlayerScore[2] }}</td>
+          <td v-if="matches[0].firstPlayerScore[3] != 0 && matches[0].secondPlayerScore[3] != 0">{{ matches[0].firstPlayerScore[3] }}</td>
+          <td v-if="matches[0].firstPlayerScore[4] != 0 && matches[0].secondPlayerScore[4] != 0">{{ matches[0].firstPlayerScore[4] }}</td>
         </tr>
-        <tr :class="{ 'winner': lastMatch.winner === 2 }">
+        <tr :class="{ 'winner': matches[0].winner === 2 }">
           <td></td>
-          <td>{{ lastMatch.secondPlayerInfo[0] + " (" + lastMatch.secondPlayerInfo[2] + ") " + lastMatch.secondPlayerInfo[1] }}</td>
-          <td>{{ lastMatch.secondPlayerScore[0] }}</td>
-          <td>{{ lastMatch.secondPlayerScore[1] }}</td>
-          <td v-if="lastMatch.firstPlayerScore[2] != 0 && lastMatch.secondPlayerScore[2] != 0">{{ lastMatch.secondPlayerScore[2] }}</td>
-          <td v-if="lastMatch.firstPlayerScore[3] != 0 && lastMatch.secondPlayerScore[3] != 0">{{ lastMatch.secondPlayerScore[3] }}</td>
-          <td v-if="lastMatch.firstPlayerScore[4] != 0 && lastMatch.secondPlayerScore[4] != 0">{{ lastMatch.secondPlayerScore[4] }}</td>
+          <td>{{ matches[0].secondPlayerInfo[0] + " (" + matches[0].secondPlayerInfo[2] + "), " + matches[0].secondPlayerInfo[1] }}</td>
+          <td>{{ matches[0].secondPlayerScore[0] }}</td>
+          <td>{{ matches[0].secondPlayerScore[1] }}</td>
+          <td v-if="matches[0].firstPlayerScore[2] != 0 && matches[0].secondPlayerScore[2] != 0">{{ matches[0].secondPlayerScore[2] }}</td>
+          <td v-if="matches[0].firstPlayerScore[3] != 0 && matches[0].secondPlayerScore[3] != 0">{{ matches[0].secondPlayerScore[3] }}</td>
+          <td v-if="matches[0].firstPlayerScore[4] != 0 && matches[0].secondPlayerScore[4] != 0">{{ matches[0].secondPlayerScore[4] }}</td>
         </tr>
       </table>
     </div>
@@ -64,6 +63,9 @@
     <p>Ładowanie danych zawodnika...</p>
   </div>
 
+  <div style="margin-top: 40px;"></div>
+
+  <div class="player-info">
   <div class="last-tournaments-container">
       <h2>Wyniki w ostatnich turniejach</h2>
       <table v-if="lastTournaments" class="tournaments-table">
@@ -84,6 +86,46 @@
       </table>
   </div>
 
+  <div class="match-table-container">
+    <h2>Następny mecz</h2>
+    <table v-if="matches.length > 0 && matches[1]" class="match-table">
+      <tr>
+          <td><b>Turniej</b></td>
+          <td>{{ matches[1].nameOfTournament }}</td>
+        </tr>
+        <tr>
+          <td><b>Ranga</b></td>
+          <td>{{ matches[1].rankOfTournament }}</td>
+        </tr>
+        <tr>
+          <td><b>Runda</b></td>
+          <td>{{ matches[1].round }}</td>
+        </tr>
+        <tr>
+          <td><b>Status</b></td>
+          <td>{{ matches[1].status }}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>{{ matches[1].firstPlayerInfo[0] + " (" + matches[1].firstPlayerInfo[2] + "), " + matches[1].firstPlayerInfo[1] }}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>VS</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>{{ matches[1].secondPlayerInfo[0] + " (" + matches[1].secondPlayerInfo[2] + "), " + matches[1].secondPlayerInfo[1] }}</td>
+        </tr>
+    </table>
+    <p v-else>Niezaplanowany</p>
+  </div>
+</div>
+
 </template>
 
   
@@ -97,13 +139,13 @@ export default {
   data() {
     return {
       player: null,
-      lastMatch: null,
+      matches: [],
       lastTournaments: null
     };
   },
   mounted() {
     this.fetchPlayerDetails();
-    this.fetchLastMatchDetails();
+    this.fetchMatches();
     this.fetchLastTournaments();
   },
   methods: {
@@ -129,14 +171,14 @@ export default {
         console.error('Błąd:', error);
       }
     },
-    async fetchLastMatchDetails() {
+    async fetchMatches() {
       try {
-        const response = await fetch(`http://localhost:8080/player/${this.id}/lastMatch`, {
+        const response = await fetch(`http://localhost:8080/player/${this.id}/getMatches`, {
           method: 'GET',
           credentials: 'include',
         });
         if (response.ok) {
-          this.lastMatch = await response.json();
+          this.matches = await response.json();
         } else {
           console.error('Błąd podczas pobierania danych ostatniego meczu.');
         }
