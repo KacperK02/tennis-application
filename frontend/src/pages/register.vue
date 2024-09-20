@@ -4,15 +4,15 @@
       <form @submit.prevent="register">
         <div>
           <label>Nazwa użytkownika:</label>
-          <input v-model="username" type="text" required />
+          <input v-model="username" type="text" required style="margin-left: 20%;" />
         </div>
         <div>
           <label>Email:</label>
-          <input v-model="email" type="email" required />
+          <input v-model="email" type="email" required style="margin-left: 20%;" />
         </div>
         <div>
           <label>Hasło:</label>
-          <input v-model="password" type="password" required />
+          <input v-model="password" type="password" required style="margin-left: 20%;" />
         </div>
         <div>
           <button type="submit">Zarejestruj się</button>
@@ -25,6 +25,8 @@
   </template>
   
   <script>
+  import '../css/index.css'
+
   export default {
     data() {
       return {

@@ -2,7 +2,6 @@ package com.application.tennisApplication.controller;
 
 import com.application.tennisApplication.model.User;
 import com.application.tennisApplication.repository.UserRepository;
-import com.application.tennisApplication.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +14,8 @@ import java.util.Map;
 @Controller
 @CrossOrigin
 public class LoginController {
-
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserService userService;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 

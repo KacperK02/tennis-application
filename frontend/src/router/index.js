@@ -52,12 +52,12 @@ router.beforeEach(async (to, from, next) => {
     // Sprawdzenie stanu sesji
     const response = await fetch('http://localhost:8080/checkSession', {
       method: 'GET',
-      credentials: 'include' // Ważne, aby ciasteczka sesji były przesyłane
+      credentials: 'include'
     });
     const result = await response.json();
 
     if (!result.loggedIn) {
-      next({ path: '/', query: { login_error: 'Musisz się zalogować, aby uzyskać dostęp do swojego konta.' } });
+      next({ path: '/', query: { loginError: 'Musisz być zalogowany, aby uzyskać dostęp do tej strony.' } });
     } else {
       next(); // Użytkownik jest zalogowany, przejście dalej
     }

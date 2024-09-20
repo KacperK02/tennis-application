@@ -13,27 +13,39 @@ form {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+form div {
+    position: relative; /* Pozwala na pozycjonowanie etykiet */
+    margin-bottom: 20px;
+}
   
 form label {
-    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%); /* Wyśrodkowanie pionowe */
     font-size: 16px;
-    margin-bottom: 8px;
     color: #333;
+    width: 30%;
+    text-align: left;
 }
   
 form input[type="email"],
-form input[type="password"] {
-    width: 100%;
+form input[type="password"],
+form input[type="text"] {
+    width: 70%;
     padding: 10px;
-    margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
     box-sizing: border-box;
+    margin-left: 10%;
 }
   
 form button {
-    width: calc(50% - 10px); /* Dwa przyciski po 50% szerokości, z małą przerwą */
+    width: calc(40% - 10px); /* Dwa przyciski po 50% szerokości, z małą przerwą */
+    margin-left: 20px;
+    margin-right: 20px;
     padding: 10px;
     font-size: 16px;
     background-color: rgb(231, 150, 0);
@@ -46,11 +58,6 @@ form button {
 
 form button:hover {
     background-color: rgb(200, 130, 0);
-}
-  
-form div {
-    display: flex;
-    justify-content: space-between;
 }
   
 .error-message {

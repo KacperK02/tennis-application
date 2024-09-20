@@ -15,7 +15,6 @@ import java.util.List;
 @Controller
 @CrossOrigin
 public class AccountController {
-
     @Autowired
     private FollowService followService;
 
@@ -30,5 +29,4 @@ public class AccountController {
             return null;
         }
     }
-
 }

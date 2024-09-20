@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2>Witaj w Strefie Tenisa!</h2>
+    <h2>Witaj w serwisie NaKorcie.pl!</h2>
 
-    <p>Najlepszy serwis dla polskich fanów tenisa! Obserwuj swoich ulubionych zawodników i nie przegap żadnych informacji o ich meczach! Zajrzyj też do sekcji Artykuły, by być na bieżąco ze wszystkimi, co się dzieje w światowym tenisie! Załóż konto już dziś!</p>
+    <p>Najlepszy serwis dla polskich fanów tenisa! Obserwuj swoich ulubionych zawodników i nie przegap żadnych informacji o ich meczach! Załóż konto już dziś!</p>
 
     <div v-if="loginError" class="error-message">
       {{ loginError }}
@@ -29,8 +29,8 @@
           <input v-model="password" type="password" required />
         </div>
         <div>
+          <button @click.prevent="goToRegister">Zarejestruj się</button>
           <button type="submit">Zaloguj się</button>
-          <button @click.prevent="goToRegister">Zarejestruj się</button> <!-- Dodany przycisk rejestracji -->
         </div>
       </form>
     </div>
@@ -56,15 +56,20 @@ export default {
       email: '',
       password: '',
       errorMessage: '',
-      loginError: '',
+      loginError: this.$route.query.loginError || '',
       isLoggedIn: false,
     };
   },
   async created() {
-    const urlParams = new URLSearchParams(window.location.search);
-    this.loginError = urlParams.get('login_error') || '';
     this.registrationSuccess = this.$route.query.registration_success || '';
     await this.checkLoginStatus();
+  },
+  watch: {
+    // Nasłuchiwanie na zmiany w query params
+    '$route.query'(newQuery) {
+      // Gdy query params się zmienią, aktualizujemy loginError
+      this.loginError = newQuery.loginError || '';
+    }
   },
   methods: {
     async checkLoginStatus() {
@@ -75,6 +80,7 @@ export default {
         });
         const result = await response.json();
         this.isLoggedIn = result.loggedIn;
+        
       } catch (error) {
         console.error('Błąd podczas sprawdzania sesji:', error);
       }

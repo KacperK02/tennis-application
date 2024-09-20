@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      StrefaTenisa.pl
+      NaKorcie.pl
     </header>
 
     <nav>
@@ -13,7 +13,7 @@
     <router-view></router-view>
 
     <footer>
-      © 2024 StrefaTenisa.pl
+      © 2024 NaKorcie.pl
     </footer>
 
   </div>
