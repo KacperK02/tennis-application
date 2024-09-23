@@ -99,7 +99,7 @@ public class APIConnection {
             HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
 
             byte[] imageBytes = response.body();
-            String filePath = "src/main/resources/static/playerPhotos/" + teamId + ".png";
+            String filePath = "frontend/src/assets/playerPhotos/" + teamId + ".png";
             Path path = Paths.get(filePath);
             Files.write(path, imageBytes);
         }

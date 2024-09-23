@@ -1,0 +1,31 @@
+.player-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    margin: 20px auto;
+    text-align: center;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .player-card p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .player-card button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(231, 150, 0);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .player-card button:hover {
+    background-color: #d1900d;
+  }
+  
