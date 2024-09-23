@@ -53,8 +53,10 @@ button:hover {
 }
 
 .isFollowing {
-  width: 150px;
+  width: 160px;
   background-color: transparent;
   color: black;
   font-weight: bold;
+  text-align: center;
+  padding: 10px 20px;
 }
