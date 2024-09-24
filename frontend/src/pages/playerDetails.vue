@@ -22,6 +22,10 @@
           <td>{{ matches[0].rankOfTournament }}</td>
         </tr>
         <tr>
+          <td><b>Nawierzchnia</b></td>
+          <td>{{ matches[0].surface }}</td>
+        </tr>
+        <tr>
           <td><b>Runda</b></td>
           <td>{{ matches[0].round }}</td>
         </tr>
@@ -37,26 +41,30 @@
           <td v-if="matches[0].firstPlayerScore[2] != 0 && matches[0].secondPlayerScore[2] != 0">Set 3</td>
           <td v-if="matches[0].firstPlayerScore[3] != 0 && matches[0].secondPlayerScore[3] != 0">Set 4</td>
           <td v-if="matches[0].firstPlayerScore[4] != 0 && matches[0].secondPlayerScore[4] != 0">Set 5</td>
+          <td v-if="matches[0].gamePoints">Punkty</td>
         </tr>
-        <tr :class="{ 'winner': matches[0].winner === 1 }">
-          <td></td>
+        <tr :class="{ 'winner': matches[0].winner === 1 }" style="height: 50px;">
+          <td><img v-if="matches[0].service && matches[0].service == 1" src="@/assets/ball.jpg" alt="serwis" style="width: 25px; height: 25px;"></td>
           <td>{{ matches[0].firstPlayerInfo[0] + " (" + matches[0].firstPlayerInfo[2] + "), " + matches[0].firstPlayerInfo[1] }}</td>
           <td>{{ matches[0].firstPlayerScore[0] }}</td>
           <td>{{ matches[0].firstPlayerScore[1] }}</td>
           <td v-if="matches[0].firstPlayerScore[2] != 0 && matches[0].secondPlayerScore[2] != 0">{{ matches[0].firstPlayerScore[2] }}</td>
           <td v-if="matches[0].firstPlayerScore[3] != 0 && matches[0].secondPlayerScore[3] != 0">{{ matches[0].firstPlayerScore[3] }}</td>
           <td v-if="matches[0].firstPlayerScore[4] != 0 && matches[0].secondPlayerScore[4] != 0">{{ matches[0].firstPlayerScore[4] }}</td>
+          <td v-if="matches[0].gamePoints">{{ matches[0].gamePoints[0] }}</td>
         </tr>
-        <tr :class="{ 'winner': matches[0].winner === 2 }">
-          <td></td>
+        <tr :class="{ 'winner': matches[0].winner === 2 }" style="height: 50px;">
+          <td><img v-if="matches[0].service && matches[0].service == 2" src="@/assets/ball.jpg" alt="serwis" style="width: 25px; height: 25px;"></td>
           <td>{{ matches[0].secondPlayerInfo[0] + " (" + matches[0].secondPlayerInfo[2] + "), " + matches[0].secondPlayerInfo[1] }}</td>
           <td>{{ matches[0].secondPlayerScore[0] }}</td>
           <td>{{ matches[0].secondPlayerScore[1] }}</td>
           <td v-if="matches[0].firstPlayerScore[2] != 0 && matches[0].secondPlayerScore[2] != 0">{{ matches[0].secondPlayerScore[2] }}</td>
           <td v-if="matches[0].firstPlayerScore[3] != 0 && matches[0].secondPlayerScore[3] != 0">{{ matches[0].secondPlayerScore[3] }}</td>
           <td v-if="matches[0].firstPlayerScore[4] != 0 && matches[0].secondPlayerScore[4] != 0">{{ matches[0].secondPlayerScore[4] }}</td>
+          <td v-if="matches[0].gamePoints">{{ matches[0].gamePoints[1] }}</td>
         </tr>
       </table>
+      <button @click="checkMatchStats">Sprawdź statystyki</button>
     </div>
   </div>
   <div v-else>
@@ -96,6 +104,10 @@
         <tr>
           <td><b>Ranga</b></td>
           <td>{{ matches[1].rankOfTournament }}</td>
+        </tr>
+        <tr>
+          <td><b>Nawierzchnia</b></td>
+          <td>{{ matches[1].surface }}</td>
         </tr>
         <tr>
           <td><b>Runda</b></td>
@@ -211,6 +223,21 @@ export default {
           this.$router.push('/account');
         } else {
           console.error('Błąd podczas usuwania zawodnika z obserwowanych.');
+        }
+      })
+      .catch(error => {
+        console.error('Błąd:', error);
+      });
+    },
+    checkMatchStats() {
+      fetch(`http://localhost:8080/getMatchStats/${this.matches[0].id}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        if (response.ok) {
+          this.$router.push('/matchStats');
+        } else {
+          console.error('Błąd podczas pobieraia statystyk.');
         }
       })
       .catch(error => {

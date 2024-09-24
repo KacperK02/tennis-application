@@ -3,6 +3,8 @@ package com.application.tennisApplication.model;
 import java.util.List;
 
 public class Match {
+    private int id;
+    private String surface;
     private String nameOfTournament;
     private String rankOfTournament;
     private String round;
@@ -12,10 +14,14 @@ public class Match {
     private int winner;
     private List<Integer> firstPlayerScore;
     private List<Integer> secondPlayerScore;
+    private List<Integer> gamePoints;
+    private int service;
 
-    public Match(String nameOfTournament, String rankOfTournament, String round, String status, List<String> firstPlayerInfo, List<String> secondPlayerInfo, int winner, List<Integer> firstPlayerGamesWon, List<Integer> secondPlayerGamesWon) {
+    public Match(int id, String nameOfTournament, String rankOfTournament, String surface, String round, String status, List<String> firstPlayerInfo, List<String> secondPlayerInfo, int winner, List<Integer> firstPlayerGamesWon, List<Integer> secondPlayerGamesWon, List<Integer> gamePoints, int service) {
+        this.id = id;
         this.nameOfTournament = nameOfTournament;
         this.rankOfTournament = rankOfTournament;
+        this.surface = surface;
         this.round = round;
         this.status = status;
         this.firstPlayerInfo = firstPlayerInfo;
@@ -23,6 +29,24 @@ public class Match {
         this.winner = winner;
         this.firstPlayerScore = firstPlayerGamesWon;
         this.secondPlayerScore = secondPlayerGamesWon;
+        this.gamePoints = gamePoints;
+        this.service = service;
+    }
+
+    public int getService() {
+        return service;
+    }
+
+    public void setService(int service) {
+        this.service = service;
+    }
+
+    public List<Integer> getGamePoints() {
+        return gamePoints;
+    }
+
+    public void setGamePoints(List<Integer> gamePoints) {
+        this.gamePoints = gamePoints;
     }
 
     public String getNameOfTournament() {
@@ -95,5 +119,21 @@ public class Match {
 
     public void setSecondPlayerScore(List<Integer> secondPlayerScore) {
         this.secondPlayerScore = secondPlayerScore;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getSurface() {
+        return surface;
+    }
+
+    public void setSurface(String surface) {
+        this.surface = surface;
     }
 }

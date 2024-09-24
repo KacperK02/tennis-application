@@ -5,6 +5,8 @@ import ATPRanking from '@/pages/ATPRanking.vue';
 import Account from '@/pages/account.vue';
 import RegisterView from '@/pages/register.vue';
 import playerDetails from '@/pages/playerDetails.vue';
+import LiveView from '@/pages/LiveView.vue';
+import MatchStats from '@/pages/MatchStats.vue';
 
 const routes = [
   {
@@ -38,6 +40,17 @@ const routes = [
     name: 'player-details',
     component: playerDetails,
     props: true  // Pozwala przekazać ID zawodnika jako props
+  },
+  {
+    path: '/live',
+    name: 'Live',
+    component: LiveView
+  },
+  {
+    path: '/match/:id',  // Ścieżka z dynamicznym parametrem id
+    name: 'match-stats',
+    component: MatchStats,
+    props: true  // Pozwala przekazać ID meczu jako props
   }
 ];
 

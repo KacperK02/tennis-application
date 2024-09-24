@@ -112,4 +112,12 @@ public class APIConnection {
     public String getPlayerNearEvent(String teamId) {
         return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/events/near");
     }
+
+    public String getLiveMatches() {
+        return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/events/live");
+    }
+
+    public String getMatchStats(int id) {
+        return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/event/" + id + "/statistics");
+    }
 }

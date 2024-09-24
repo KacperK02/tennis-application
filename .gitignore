@@ -1,6 +1,7 @@
 src/main/resources/API/key.txt
 frontend/src/assets/playerPhotos/
 HELP.md
+TODO.txt
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

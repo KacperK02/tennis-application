@@ -104,6 +104,46 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
     @Override
+    public String translateRound(String englishRound) {
+        String round = englishRound;
+        switch (englishRound) {
+            case "Final" -> round = "FINAŁ";
+            case "Semifinals" -> round = "półfinał";
+            case "Quarterfinals" -> round = "ćwierćfinał";
+            case "Round of 16" -> round = "1/8 finału";
+            case "Round of 32" -> round = "1/16 finału";
+            case "Round of 64" -> round = "1/32 finału";
+            case "Round of 128" -> round = "1/64 finału";
+            case "Match for 3rd place" -> round = "Mecz o 3. miejsce";
+        }
+        return round;
+    }
+
+    @Override
+    public List<String> getPlayerMatchStats(JsonNode node, String player) {
+        //aces, double faults, 1st service, 2nd service, 1st serve point won, 2nd service points won, fh winners, bh winners,
+        // fh ue, bh ue, break points saved
+        List<String> playerStats = new ArrayList<>();
+
+        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(0).path(player).asText());
+        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(1).path(player).asText());
+        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(2).path(player).asText());
+        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(3).path(player).asText());
+        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(4).path(player).asText());
+        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(5).path(player).asText());
+
+        playerStats.add(node.path("groups").path(3).path("statisticsItems").path(0).path(player).asText());
+        playerStats.add(node.path("groups").path(3).path("statisticsItems").path(1).path(player).asText());
+
+        playerStats.add(node.path("groups").path(5).path("statisticsItems").path(0).path(player).asText());
+        playerStats.add(node.path("groups").path(5).path("statisticsItems").path(1).path(player).asText());
+
+        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(7).path(player).asText());
+
+        return playerStats;
+    }
+
+    @Override
     public List<Tournament> getPlayerTournaments(String response) throws JsonProcessingException {
         List <Tournament> tournaments = new ArrayList<>();
 
@@ -122,6 +162,7 @@ public class PlayerServiceImpl implements PlayerService{
             else {
                 round = node.path("round").asText();
                 if (round == null || round.isEmpty()) round = "przegrana";
+                else round = translateRound(round);
             }
 
             int points;
@@ -163,8 +204,19 @@ public class PlayerServiceImpl implements PlayerService{
 
         if (node.isEmpty()) return null;
 
+        int id = node.path("id").asInt();
+
         String nameOfTournament = node.path("season").path("name").asText();
         if (nameOfTournament.equals("")) nameOfTournament = node.path("tournament").path("name").asText();
+
+        String surface = node.path("tournament").path("uniqueTournament").path("groundType").asText();
+        switch(surface) {
+            case "Hardcourt outdoor" -> surface = "twarda";
+            case "Hardcourt indoor" -> surface = "twarda (hala)";
+            case "Red clay" -> surface = "ziemna";
+            case "Red clay indoor" -> surface = "ziemna (hala)";
+            case "grass" -> surface = "trawiasta";
+        }
 
         String rankOfTournament;
         int points = node.path("tournament").path("uniqueTournament").path("tennisPoints").asInt();
@@ -177,6 +229,8 @@ public class PlayerServiceImpl implements PlayerService{
         }
 
         String round = node.path("roundInfo").path("name").asText();
+        round = translateRound(round);
+
         int winner = node.path("winnerCode").asInt();
 
         String status = node.path("status").path("type").asText();
@@ -184,6 +238,7 @@ public class PlayerServiceImpl implements PlayerService{
             case "finished" -> status = "zakończony";
             case "notstarted" -> status = "zaplanowany";
             case "interrupted" -> status = "przerwany";
+            case "inprogress" -> status = "w trakcie";
         }
 
         int firstPlayerTeamId = node.path("homeTeam").path("id").asInt();
@@ -250,7 +305,7 @@ public class PlayerServiceImpl implements PlayerService{
         }
 
         if (Objects.equals(whichMatch, "next")) {
-            return new Match(nameOfTournament, rankOfTournament, round, status, firstPlayerInfo, secondPlayerInfo, -1, null, null);
+            return new Match(id, nameOfTournament, rankOfTournament, surface, round, status, firstPlayerInfo, secondPlayerInfo, -1, null, null, null, -1);
         }
 
         List <Integer> firstPlayerScore = new ArrayList<>();
@@ -267,6 +322,25 @@ public class PlayerServiceImpl implements PlayerService{
         secondPlayerScore.add(node.path("awayScore").path("period4").asInt());
         secondPlayerScore.add(node.path("awayScore").path("period5").asInt());
 
-        return new Match(nameOfTournament, rankOfTournament, round, status, firstPlayerInfo, secondPlayerInfo, winner, firstPlayerScore, secondPlayerScore);
+        if (!status.equals("w trakcie")) {
+            return new Match(id, nameOfTournament, rankOfTournament, surface, round, status, firstPlayerInfo, secondPlayerInfo, winner, firstPlayerScore, secondPlayerScore, null, -1);
+        }
+
+        List<Integer> gamePoints = new ArrayList<>();
+        gamePoints.add(node.path("homeScore").path("point").asInt());
+        gamePoints.add(node.path("awayScore").path("point").asInt());
+
+        int numberOfGames = firstPlayerScore.stream().mapToInt(Integer::intValue).sum() + secondPlayerScore.stream().mapToInt(Integer::intValue).sum();
+        for (int i = 0; i < firstPlayerScore.size(); i++) {
+            if (firstPlayerScore.get(i) == 7 || secondPlayerScore.get(i) == 7) numberOfGames--;
+        }
+        int servesFirst = node.path("firstToServe").asInt();
+        int service = -1;
+        if (numberOfGames % 2 == 0 && servesFirst == 1) service = 1;
+        if (numberOfGames % 2 == 0 && servesFirst == 2) service = 2;
+        if (numberOfGames % 2 == 1 && servesFirst == 1) service = 2;
+        if (numberOfGames % 2 == 1 && servesFirst == 2) service = 1;
+
+        return new Match(id, nameOfTournament, rankOfTournament, surface, round, status, firstPlayerInfo, secondPlayerInfo, winner, firstPlayerScore, secondPlayerScore, gamePoints, service);
     }
 }
