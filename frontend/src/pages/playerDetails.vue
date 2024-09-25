@@ -230,19 +230,9 @@ export default {
       });
     },
     checkMatchStats() {
-      fetch(`http://localhost:8080/getMatchStats/${this.matches[0].id}`, {
-        method: 'GET',
-      })
-      .then(response => {
-        if (response.ok) {
-          this.$router.push('/matchStats');
-        } else {
-          console.error('Błąd podczas pobieraia statystyk.');
-        }
-      })
-      .catch(error => {
-        console.error('Błąd:', error);
-      });
+      localStorage.setItem('matches', JSON.stringify(this.matches));
+      localStorage.setItem('player', JSON.stringify(this.player));
+      this.$router.push(`/match/${this.matches[0].id}`);
     }
   }
 };

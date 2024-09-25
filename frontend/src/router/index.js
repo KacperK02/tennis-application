@@ -50,7 +50,6 @@ const routes = [
     path: '/match/:id',  // Ścieżka z dynamicznym parametrem id
     name: 'match-stats',
     component: MatchStats,
-    props: true  // Pozwala przekazać ID meczu jako props
   }
 ];
 

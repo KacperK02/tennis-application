@@ -1,7 +1,7 @@
 <template>
     <h1>Wyniki na żywo</h1>
     <div class="live-matches">
-        <div class="match-table-container" v-for="(match, index) in matches" :key="index">
+        <div v-for="(match, index) in matches" :key="index" class="match-table-container">
         <table class="match-table">
         <tr>
           <td><b>Turniej</b></td>
@@ -54,7 +54,7 @@
           <td>{{ match.gamePoints[1] }}</td>
         </tr>
       </table>
-        </div>
+      </div>
     </div>
 </template>
 

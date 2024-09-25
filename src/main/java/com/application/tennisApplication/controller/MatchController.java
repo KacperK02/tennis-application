@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.header.writers.HstsHeaderWriter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,18 +47,18 @@ public class MatchController {
     }
 
     @GetMapping("/getMatchStats/{id}")
-    public ResponseEntity<List<List<String>>> getMatchStats(@PathVariable int id) throws JsonProcessingException {
+    public ResponseEntity<List<HashMap<String, String>>> getMatchStats(@PathVariable int id) throws JsonProcessingException {
         APIConnection apiConnection = new APIConnection();
         String response = apiConnection.getMatchStats(id);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response);
-        JsonNode node = jsonNode.path("statistics").path(0);
+        JsonNode node = jsonNode.path("statistics").path(0).path("groups");
 
-        //aces, double faults, 1st service, 2nd service, 1st serve point won, 2nd service points won, fh winners, bh winners,
-        // fh ue, bh ue, break points saved
-        List<List<String>> matchStats = new ArrayList<>();
-        List<String> firstPlayerStats = playerService.getPlayerMatchStats(node, "home");
-        List<String> secondPlayerStats = playerService.getPlayerMatchStats(node, "away");
+        //aces, double faults, 1st service, 1st serve point won, 2nd service points won, fh winners, bh winners,
+        // fh ue, bh ue, break points converted
+        List<HashMap<String, String>> matchStats = new ArrayList<>();
+        HashMap<String, String> firstPlayerStats = playerService.getPlayerMatchStats(node, "home");
+        HashMap<String, String> secondPlayerStats = playerService.getPlayerMatchStats(node, "away");
 
         matchStats.add(firstPlayerStats);
         matchStats.add(secondPlayerStats);

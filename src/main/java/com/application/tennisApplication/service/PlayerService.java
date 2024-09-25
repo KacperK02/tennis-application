@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,5 @@ public interface PlayerService {
     List<String> getPlayerInfo(Player player, String seed);
     Match getPlayerMatch(String response, String whichMatch) throws JsonProcessingException;
     String translateRound(String englishRound);
-
-    List<String> getPlayerMatchStats(JsonNode node, String player);
+    HashMap<String, String> getPlayerMatchStats(JsonNode node, String player);
 }

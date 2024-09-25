@@ -120,25 +120,51 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
     @Override
-    public List<String> getPlayerMatchStats(JsonNode node, String player) {
-        //aces, double faults, 1st service, 2nd service, 1st serve point won, 2nd service points won, fh winners, bh winners,
-        // fh ue, bh ue, break points saved
-        List<String> playerStats = new ArrayList<>();
+    public HashMap<String, String> getPlayerMatchStats(JsonNode node, String player) {
+        //aces, double faults, 1st service, 1st serve point won, 2nd service points won, fh winners, bh winners,
+        // fh ue, bh ue, break points converted
+        HashMap<String, String> playerStats = new HashMap<>();
+        String stat;
 
-        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(0).path(player).asText());
-        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(1).path(player).asText());
-        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(2).path(player).asText());
-        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(3).path(player).asText());
-        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(4).path(player).asText());
-        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(5).path(player).asText());
+        for (int i = 0; i < node.size(); i++) {
+            if (Objects.equals(node.path(i).path("groupName").asText(), "Service")) {
+                stat = node.path(i).path("statisticsItems").path(0).path(player).asText(null);
+                playerStats.put("aces", Objects.requireNonNullElse(stat, "-"));
 
-        playerStats.add(node.path("groups").path(3).path("statisticsItems").path(0).path(player).asText());
-        playerStats.add(node.path("groups").path(3).path("statisticsItems").path(1).path(player).asText());
+                stat = node.path(i).path("statisticsItems").path(1).path(player).asText(null);
+                playerStats.put("doubleFaults", Objects.requireNonNullElse(stat, "-"));
 
-        playerStats.add(node.path("groups").path(5).path("statisticsItems").path(0).path(player).asText());
-        playerStats.add(node.path("groups").path(5).path("statisticsItems").path(1).path(player).asText());
+                stat = node.path(i).path("statisticsItems").path(2).path(player).asText(null);
+                playerStats.put("firstService", Objects.requireNonNullElse(stat, "-"));
 
-        playerStats.add(node.path("groups").path(0).path("statisticsItems").path(7).path(player).asText());
+                stat = node.path(i).path("statisticsItems").path(4).path(player).asText(null);
+                playerStats.put("firstServicePointsWon", Objects.requireNonNullElse(stat, "-"));
+
+                stat = node.path(i).path("statisticsItems").path(5).path(player).asText(null);
+                playerStats.put("secondServicePointsWon", Objects.requireNonNullElse(stat, "-"));
+            }
+
+            if (Objects.equals(node.path(i).path("groupName").asText(), "Winners")) {
+                stat = node.path(i).path("statisticsItems").path(0).path(player).asText(null);
+                playerStats.put("forhendWinners", Objects.requireNonNullElse(stat, "-"));
+
+                stat = node.path(i).path("statisticsItems").path(1).path(player).asText(null);
+                playerStats.put("bekhendWinners", Objects.requireNonNullElse(stat, "-"));
+            }
+
+            if (Objects.equals(node.path(i).path("groupName").asText(), "Unforced errors")) {
+                stat = node.path(i).path("statisticsItems").path(0).path(player).asText(null);
+                playerStats.put("forhendUnforcedErrors", Objects.requireNonNullElse(stat, "-"));
+
+                stat = node.path(i).path("statisticsItems").path(1).path(player).asText(null);
+                playerStats.put("bekhendUnforcedErrors", Objects.requireNonNullElse(stat, "-"));
+            }
+
+            if (Objects.equals(node.path(i).path("groupName").asText(), "Return")) {
+                stat = node.path(i).path("statisticsItems").path(3).path(player).asText(null);
+                playerStats.put("breakPointsConverted", Objects.requireNonNullElse(stat, "-"));
+            }
+        }
 
         return playerStats;
     }

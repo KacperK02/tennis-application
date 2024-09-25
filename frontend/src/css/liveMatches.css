@@ -4,14 +4,12 @@
     margin: 0 auto;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     flex-wrap: wrap;
     gap: 40px;
 }
 
 .match-table-container {
     width: 48%;
-    margin: 0 auto;
 }
 
 .match-table {
@@ -19,22 +17,22 @@
     border-collapse: collapse;
     margin-top: 20px;
     margin-bottom: 20px;
-  }
+}
   
-  .match-table th, .match-table td {
+.match-table th, .match-table td {
     border: 1px solid #ddd;
     padding: 8px;
-  }
+}
   
-  .match-table th {
+.match-table th {
     background-color: #f2f2f2;
     text-align: left;
-  }
+}
 
-  .match-table tr:nth-child(even) {
+.match-table tr:nth-child(even) {
     background-color: #f9f9f9;
-  }
+}
 
-  .winner {
+.winner {
     font-weight: bold;
-  }
+}

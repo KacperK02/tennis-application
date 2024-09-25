@@ -1,0 +1,41 @@
+.match-stats-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.match-stats-table, .match-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.match-stats-table th, .match-stats-table td, .match-table th, .match-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.match-stats-table th {
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+.match-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.match-stats-table tr:nth-child(even), .match-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.match-table-container {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.winner {
+    font-weight: bold;
+}
+
