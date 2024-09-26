@@ -1,6 +1,5 @@
 <template>
   <div v-if="player" class="player-info">
-    <!-- Sekcja z danymi zawodnika -->
     <div class="player-details">
       <h1>{{ player.name }}</h1>
       <img :src="getPlayerPhotoUrl(player.teamid)" alt="Zdjęcie zawodnika" />

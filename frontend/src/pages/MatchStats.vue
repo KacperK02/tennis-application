@@ -1,6 +1,25 @@
 <template>
 
-<div class="match-table-container">
+<div class="player-info">
+  <div v-if="player && enemy" class="player-details">
+    <h1>{{ matches[0].firstPlayerInfo[3] == player.teamid ? player.name : enemy.name }}</h1>
+    <img :src="getPlayerPhotoUrl(matches[0].firstPlayerInfo[3] == player.teamid ? player.teamid : enemy.teamid)" alt="Zdjęcie zawodnika" />
+    <p><strong>Kraj:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? player.country : enemy.country }}</p>
+    <p><strong>Ranking:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? player.ranking : enemy.ranking }}</p>
+    <p><strong>Punkty:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? player.points : enemy.points }}</p>
+    <button v-if="matches[0].firstPlayerInfo[3] == player.teamid" @click="goBack">Wróć do profilu zawodnika</button>
+  </div>
+
+  <div v-if="player && !enemy" class="player-details">
+      <h1>{{ player.name }}</h1>
+      <img :src="getPlayerPhotoUrl(player.teamid)" alt="Zdjęcie zawodnika" />
+      <p><strong>Kraj:</strong> {{ player.country }}</p>
+      <p><strong>Ranking:</strong> {{ player.ranking }}</p>
+      <p><strong>Punkty:</strong> {{ player.points }}</p>
+      <button @click="goBack">Wróć do profilu zawodnika</button>
+    </div>
+
+    <div class="match-table-container">
       <table v-if="matches.length > 0 && matches[0]" class="match-table">
         <tr>
           <td><b>Turniej</b></td>
@@ -55,14 +74,24 @@
       </table>
     </div>
 
+    <div v-if="player && enemy" class="player-details">
+      <h1>{{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.name : player.name }}</h1>
+      <img :src="getPlayerPhotoUrl(matches[0].firstPlayerInfo[3] == player.teamid ? enemy.teamid : player.teamid)" alt="Zdjęcie zawodnika" />
+      <p><strong>Kraj:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.country : player.country }}</p>
+      <p><strong>Ranking:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.ranking : player.ranking }}</p>
+      <p><strong>Punkty:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.points : player.points }}</p>
+      <button v-if="matches[0].firstPlayerInfo[3] == enemy.teamid" @click="goBack">Wróć do profilu zawodnika</button>
+  </div>
+</div>
+
     <div class="match-stats-container">
       <h1>Statystyki meczu</h1>
       <table v-if="matchStats.length === 2" class="match-stats-table">
         <thead>
           <tr>
-            <th>Gracz 1</th>
+            <th>{{ matches[0].firstPlayerInfo[0] }}</th>
             <th>Statystyka</th>
-            <th>Gracz 2</th>
+            <th>{{ matches[0].secondPlayerInfo[0] }}</th>
           </tr>
         </thead>
         <tbody>
@@ -130,16 +159,23 @@
       return {
         matchStats: [],
         matches: [],
-        player: null
+        player: null,
+        enemy: null
       };
     },
-    created() {
+    async created() {
       const matchId = this.$route.params.id;
       this.matches = JSON.parse(localStorage.getItem('matches'));
       this.player = JSON.parse(localStorage.getItem('player'));
-      this.fetchMatchStats(matchId);
+
+      await this.fetchMatchStats(matchId);
+      await this.fetchEnemyPlayer();
+      await this.checkPhotoExists();
     },
     methods: {
+      goBack() {
+        this.$router.go(-1);  // Przejście do poprzedniej strony
+      },
       async fetchMatchStats(matchId) {
         try {
             const response = await fetch(`http://localhost:8080/getMatchStats/${matchId}`, {
@@ -154,6 +190,67 @@
           console.error("Błąd podczas pobierania statystyk:", error);
         }
       },
+      getPlayerPhotoUrl(teamid) {
+      try {
+        return require(`@/assets/playerPhotos/${teamid}.png`);
+      } catch (error) {
+        return require('@/assets/playerPhotos/placeholder.png');
+      }
     },
+    async fetchEnemyPlayer() {
+      let response = null;
+      try {
+        if (this.matches[0].firstPlayerInfo[3] == this.player.teamid) {
+          response = await fetch(`http://localhost:8080/getPlayer/${this.matches[0].secondPlayerInfo[3]}`, {
+          method: 'GET',
+        });
+        }
+        else {
+          response = await fetch(`http://localhost:8080/getPlayer/${this.matches[0].firstPlayerInfo[3]}`, {
+          method: 'GET',
+        });
+        }
+        
+        if (response.ok) {
+          this.enemy = await response.json();
+        } else {
+          console.error('Błąd podczas pobierania danych zawodnika.');
+        }
+      } catch (error) {
+        console.error('Błąd:', error);
+      }
+    },
+    async checkPhotoExists() {
+        if (this.enemy && this.enemy.teamid) {
+          try {
+          const response = await fetch(`http://localhost:8080/player/photoExists/${this.enemy.teamid}`);
+          const exists = await response.json();
+          if (exists) {
+            this.photoExists = true;
+            this.photoUrl = `src/assets/playerPhotos/${this.enemy.teamid}.png`;
+          } else {
+            await this.fetchPhotoFromAPI();  // Pobierz zdjęcie z API, jeśli nie istnieje
+          }
+        } catch (error) {
+          console.error('Błąd podczas sprawdzania zdjęcia:', error);
+        }
+        }
+      },
+      async fetchPhotoFromAPI() {
+        if (this.enemy && this.enemy.teamid) {
+          try {
+          const response = await fetch(`http://localhost:8080/player/fetchPhoto/${this.enemy.teamid}`, {
+            method: 'POST'
+          });
+          if (response.ok) {
+            this.photoExists = true;
+            this.photoUrl = `src/assets/playerPhotos/${this.enemy.teamid}.png`;
+          }
+        } catch (error) {
+          console.error('Błąd podczas pobierania zdjęcia z API:', error);
+        }
+        }
+      }
+    }
   };
   </script>

@@ -16,6 +16,7 @@ public interface PlayerService {
     List<Player> getAllWTAPlayers();
     List<Player> getAllATPPlayers();
     Optional<Player> getPlayerById(int id);
+    Optional<Player> getPlayerByTeamId(int teamid);
     void updateRanking() throws IOException, InterruptedException;
     List<Tournament> getPlayerTournaments(String response) throws JsonProcessingException;
     List<String> getPlayerInfo(Player player, String seed);

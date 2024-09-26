@@ -43,6 +43,11 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
     @Override
+    public Optional<Player> getPlayerByTeamId(int teamid) {
+        return Optional.ofNullable(playerRepository.getPlayerByTeamid(teamid));
+    }
+
+    @Override
     public void updateRanking() throws IOException {
         List <Player> oldRankingPlayers = getAllPlayers();
         List <Player> newRankingPlayers = new ArrayList<>();
@@ -213,6 +218,7 @@ public class PlayerServiceImpl implements PlayerService{
         playerInfo.add(player.getName());
         playerInfo.add(player.getCountry());
         playerInfo.add(seed);
+        playerInfo.add(String.valueOf(player.getTeamid()));
         return playerInfo;
     }
 

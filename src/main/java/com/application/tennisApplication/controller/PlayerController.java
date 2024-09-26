@@ -47,6 +47,16 @@ public class PlayerController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/getPlayer/{teamid}")
+    public ResponseEntity<Player> getPlayerByTeamId(@PathVariable int teamid) {
+        Optional<Player> playerOptional = playerService.getPlayerByTeamId(teamid);
+        if (playerOptional.isPresent()) {
+            Player player = playerOptional.get();
+            return ResponseEntity.ok(player);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("/player/{id}/getMatches")
     public ResponseEntity<List<Match>> getPlayerMatches(@PathVariable int id) throws JsonProcessingException {
         Optional<Player> playerOptional = playerService.getPlayerById(id);

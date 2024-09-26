@@ -58,16 +58,20 @@ public class MatchServiceImpl implements MatchService {
         String playerName = node.path("homeTeam").path("name").asText();
         String playerCountry = node.path("homeTeam").path("country").path("name").asText();
         String playerSeed = node.path("homeTeamSeed").asText();
+        String teamid = node.path("homeTeam").path("id").asText();
         firstPlayerInfo.add(playerName);
         firstPlayerInfo.add(playerCountry);
         firstPlayerInfo.add(playerSeed);
+        firstPlayerInfo.add(teamid);
 
         playerName = node.path("awayTeam").path("name").asText();
         playerCountry = node.path("awayTeam").path("country").path("name").asText();
         playerSeed = node.path("awayTeamSeed").asText();
+        teamid = node.path("awayTeam").path("id").asText();
         secondPlayerInfo.add(playerName);
         secondPlayerInfo.add(playerCountry);
         secondPlayerInfo.add(playerSeed);
+        secondPlayerInfo.add(teamid);
 
         List <Integer> firstPlayerScore = new ArrayList<>();
         firstPlayerScore.add(node.path("homeScore").path("period1").asInt());
