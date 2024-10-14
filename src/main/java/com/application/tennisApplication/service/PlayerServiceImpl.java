@@ -127,7 +127,7 @@ public class PlayerServiceImpl implements PlayerService{
     @Override
     public HashMap<String, String> getPlayerMatchStats(JsonNode node, String player) {
         //aces, double faults, 1st service, 1st serve point won, 2nd service points won, fh winners, bh winners,
-        // fh ue, bh ue, break points converted
+        // fh ue, bh ue, break points converted, total points won
         HashMap<String, String> playerStats = new HashMap<>();
         String stat;
 
@@ -168,6 +168,17 @@ public class PlayerServiceImpl implements PlayerService{
             if (Objects.equals(node.path(i).path("groupName").asText(), "Return")) {
                 stat = node.path(i).path("statisticsItems").path(3).path(player).asText(null);
                 playerStats.put("breakPointsConverted", Objects.requireNonNullElse(stat, "-"));
+            }
+
+            if (Objects.equals(node.path(i).path("groupName").asText(), "Points")) {
+                String stat1 = node.path(i).path("statisticsItems").path("Service points won").path(player).asText(null);
+                String stat2 = node.path(i).path("statisticsItems").path("Receiver points won").path(player).asText(null);
+                int totalPoints = 0;
+                String strTotalPoints;
+                if (stat1 != null && stat2 != null) totalPoints = Integer.parseInt(stat1) + Integer.parseInt(stat2);
+                if (totalPoints == 0) strTotalPoints = null;
+                else strTotalPoints = String.valueOf(totalPoints);
+                playerStats.put("totalPointsWon", Objects.requireNonNullElse(strTotalPoints, ""));
             }
         }
 

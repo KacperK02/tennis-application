@@ -145,6 +145,11 @@
             <td>Wykorzystane break pointy</td>
             <td>{{ matchStats[1].breakPointsConverted }}</td>
           </tr>
+          <tr>
+            <td>{{ matchStats[0].totalPointsWon }}</td>
+            <td>Łącznie wygrane punkty</td>
+            <td>{{ matchStats[1].totalPointsWon }}</td>
+          </tr>
         </tbody>
       </table>
       <p v-else>Ładowanie statystyk meczu...</p>
