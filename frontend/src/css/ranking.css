@@ -5,5 +5,92 @@
     margin: 0 auto;
     padding: 20px;
   }
+
+  .ranking-list-legend {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: -40px;
+    font-weight: bold;
+  }
+
+  .ranking-list-legend p {
+    text-align: center;
+  }
+
+  .ranking-list-legend .ranking {
+    width: 160px;
+  }
+  
+  .ranking-list-legend .name {
+    width: 395px;
+  }
+  
+  .ranking-list-legend .country {
+    width: 250px;
+  }
+  
+  .ranking-list-legend .points {
+    width: 205px;
+  }
+
+  .ranking-list-legend .follow {
+    width: 240px;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .controls label {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .controls select,
+  .controls input[type="number"],
+  .controls input[type="text"] {
+    padding: 8px;
+    margin-right: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s ease-in-out;
+  }
+  
+  .controls select:hover,
+  .controls input[type="number"]:hover,
+  .controls input[type="text"]:hover {
+    border-color: rgba(245, 160, 3, 0.859);
+  }
+  
+  .controls select:focus,
+  .controls input[type="number"]:focus,
+  .controls input[type="text"]:focus {
+    border-color: rgba(245, 160, 3, 0.859);
+    outline: none;
+    box-shadow: 0 0 5px rgba(245, 160, 3, 0.859);
+  }
+  
+  .controls input[type="number"] {
+    width: 80px;
+    margin-right: 10px;
+  }
+  
+  #playerSearch {
+    width: 200px;
+  }
   
   

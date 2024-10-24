@@ -7,6 +7,7 @@ import RegisterView from '@/pages/register.vue';
 import playerDetails from '@/pages/playerDetails.vue';
 import LiveView from '@/pages/LiveView.vue';
 import MatchStats from '@/pages/MatchStats.vue';
+import accountSettings from '@/pages/accountSettings.vue';
 
 const routes = [
   {
@@ -28,6 +29,12 @@ const routes = [
     path: '/account',
     name: 'Account',
     component: Account,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/accountSettings',
+    name: 'AccountSettings',
+    component: accountSettings,
     meta: { requiresAuth: true }
   },
   {

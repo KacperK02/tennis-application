@@ -1,11 +1,29 @@
-p {
-    font-size: 18px;
-    margin-left: 50px;
-    margin-right: 50px;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-form {
-    max-width: 400px;
+p {
+    font-size: 18px;
+}
+
+.user-info {    
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.user-info p {
+    transform: translateY(-25%);
+    margin: 0;
+}
+
+.container form {
+    width: 400px;
     margin: 0 auto;
     padding: 20px;
     background-color: #f9f9f9;
@@ -74,7 +92,7 @@ form button:hover {
 
 .logo {
     display: block;
-    margin: 20px auto;
+    margin: 0 auto;
     max-width: 500px;
 }
   

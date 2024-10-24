@@ -46,6 +46,7 @@ button {
   text-align: center;
   width: 150px;
   white-space: nowrap;
+  transform: translateY(-25%);
 }
 
 button:hover {

@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="container">
     <h2>Witaj w serwisie NaKorcie.pl!</h2>
 
-    <p>Najlepszy serwis dla polskich fanów tenisa! Obserwuj swoich ulubionych zawodników i nie przegap żadnych informacji o ich meczach! Załóż konto już dziś!</p>
+    <p>Najlepszy serwis dla polskich fanów tenisa! Obserwuj swoich ulubionych zawodników i nie przegap żadnych informacji o ich meczach! Sprawdzaj rankingi, statystyki i śledź mecze tenisowe na żywo! Załóż konto już dziś!</p>
 
     <div v-if="loginError" class="error-message">
       {{ loginError }}
@@ -35,9 +35,8 @@
       </form>
     </div>
 
-    <!-- Przyciski, jeśli użytkownik jest zalogowany -->
-    <div v-else>
-      <p>Jesteś zalogowany.</p>
+    <div v-else class="user-info">
+      <p>Jesteś zalogowany jako: <b>{{ username }}</b></p>
       <button @click="logout">Wyloguj się</button>
     </div>
 
@@ -58,6 +57,7 @@ export default {
       errorMessage: '',
       loginError: this.$route.query.loginError || '',
       isLoggedIn: false,
+      username: ''
     };
   },
   async created() {
@@ -80,6 +80,21 @@ export default {
         });
         const result = await response.json();
         this.isLoggedIn = result.loggedIn;
+
+        try {
+          const response = await fetch('http://localhost:8080/user-info', {
+            method: 'GET',
+            credentials: 'include',
+          });
+          if (response.ok) {
+            const data = await response.json();
+            this.username = data.username;  // ustawienie nazwy użytkownika
+          } else {
+            console.error('Błąd podczas ładowania danych użytkownika');
+          }
+        } catch (error) {
+          console.error('Błąd:', error);
+        }
         
       } catch (error) {
         console.error('Błąd podczas sprawdzania sesji:', error);
