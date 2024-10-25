@@ -21,6 +21,5 @@ public interface PlayerService {
     List<Tournament> getPlayerTournaments(String response) throws JsonProcessingException;
     List<String> getPlayerInfo(Player player, String seed);
     Match getPlayerMatch(String response, String whichMatch) throws JsonProcessingException;
-    String translateRound(String englishRound);
     HashMap<String, String> getPlayerMatchStats(JsonNode node, String player);
 }

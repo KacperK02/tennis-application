@@ -1,8 +1,22 @@
 <template>
-    <h1>Wyniki na żywo</h1>
-    <div class="live-matches">
-        <div v-for="(match, index) in matches" :key="index" class="match-table-container">
-        <table class="match-table">
+  <h1>Wyniki na żywo</h1>
+
+  <!-- Checkboxy do filtrowania -->
+  <div class="filters">
+    <label>Ranga turnieju:</label>
+    <label><input type="checkbox" v-model="selectedRanks" value="WTA"> WTA</label>
+    <label><input type="checkbox" v-model="selectedRanks" value="ATP"> ATP</label>
+    <label><input type="checkbox" v-model="selectedRanks" value="ITF"> ITF</label>
+    <label></label>
+    <label>Rodzaj gry:</label>
+    <label><input type="checkbox" v-model="selectedTypes" value="singiel"> Singiel</label>
+    <label><input type="checkbox" v-model="selectedTypes" value="debel"> Debel</label>
+  </div>
+
+  <!-- Wyniki na żywo -->
+  <div class="live-matches">
+    <div v-for="(match, index) in filteredMatches" :key="index" class="match-table-container">
+      <table class="match-table">
         <tr>
           <td><b>Turniej</b></td>
           <td>{{ match.nameOfTournament }}</td>
@@ -54,26 +68,43 @@
           <td>{{ match.gamePoints[1] }}</td>
         </tr>
       </table>
-      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import "../css/liveMatches.css"
+import "../css/liveMatches.css";
 
 export default {
   data() {
     return {
       matches: [],
+      selectedRanks: ["WTA", "ATP", "ITF"],
+      selectedTypes: ["singiel", "debel"]
     };
   },
+  computed: {
+    filteredMatches() {
+      return this.matches.filter(match => {
+        const isSingle = !match.firstPlayerInfo[0].includes("/") && !match.secondPlayerInfo[0].includes("/");
+        const isDouble = match.firstPlayerInfo[0].includes("/") && match.secondPlayerInfo[0].includes("/");
+        
+        const matchesRankFilter = this.selectedRanks.length === 0 || 
+                                  this.selectedRanks.some(rank => match.nameOfTournament.includes(rank));
+        const matchesTypeFilter = (isSingle && this.selectedTypes.includes("singiel")) || 
+                                  (isDouble && this.selectedTypes.includes("debel"));
+
+        return matchesRankFilter && matchesTypeFilter;
+      });
+    },
+  },
   mounted() {
-    fetch('http://localhost:8080/getLiveMatches')
+    fetch("http://localhost:8080/getLiveMatches")
       .then(response => response.json())
       .then(data => {
         this.matches = data;
       })
-      .catch(error => console.error('Błąd:', error));
+      .catch(error => console.error("Błąd:", error));
   },
 };
 </script>

@@ -37,3 +37,22 @@
 .winner {
     font-weight: bold;
 }
+
+.filters {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+  
+.filters label {
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+}
+  
+.filters input[type="checkbox"] {
+    margin-right: 4px;
+    transform: scale(1.2);
+    cursor: pointer;
+}
