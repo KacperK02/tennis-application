@@ -106,7 +106,6 @@ public class APIConnection {
         catch (Exception e){
             System.out.println("Failed to get data from API. " + e);
         }
-
     }
 
     public String getPlayerNearEvent(String teamId) {

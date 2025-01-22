@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.header.writers.HstsHeaderWriter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +31,7 @@ public class MatchController {
     @GetMapping("/getLiveMatches")
     public ResponseEntity<List<Match>> getLiveMatches() throws JsonProcessingException {
         APIConnection apiConnection = new APIConnection();
-        String response = apiConnection.getLiveMatches();
+        String response = apiConnection.getLiveMatches(); // pobieranie wyników aktualnie trwających meczów z RapidAPI
         List<Match> liveMatches = new ArrayList<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -40,7 +39,7 @@ public class MatchController {
         JsonNode node = jsonNode.path("events");
 
         for (int i = 0; i < node.size(); i++) {
-            liveMatches.add(matchService.getMatchInfo(node.path(i)));
+            liveMatches.add(matchService.getMatchInfo(node.path(i))); // wyodrębnianie z odpowiedzi od RapidAPI informacji o poszczególnych meczach
         }
 
         return ResponseEntity.ok(liveMatches);
@@ -55,7 +54,7 @@ public class MatchController {
         JsonNode node = jsonNode.path("statistics").path(0).path("groups");
 
         //aces, double faults, 1st service, 1st serve point won, 2nd service points won, fh winners, bh winners,
-        // fh ue, bh ue, break points converted
+        // fh errors, bh errors, break points converted
         List<HashMap<String, String>> matchStats = new ArrayList<>();
         HashMap<String, String> firstPlayerStats = playerService.getPlayerMatchStats(node, "home");
         HashMap<String, String> secondPlayerStats = playerService.getPlayerMatchStats(node, "away");

@@ -28,7 +28,7 @@ public class FollowController {
 
     @GetMapping("/follow/isFollowing/{playerID}")
     public ResponseEntity<Boolean> isFollowing(@PathVariable int playerID, HttpSession session) {
-        if (session.getAttribute("user") != null) {
+        if (session.getAttribute("user") != null) { // weryfikacja, czy użytkownik jest zalogowany
             User user = (User) session.getAttribute("user");
             boolean isFollowing = followService.isPlayerFollowedByUser(playerID, user.getUserID());
             return ResponseEntity.ok(isFollowing);
@@ -45,7 +45,7 @@ public class FollowController {
             Follow follow = new Follow();
             follow.setUser(user);
             follow.setPlayer(player);
-            followRepository.save(follow);
+            followRepository.save(follow); // zapisanie nowej obserwacji do bazy danych
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -60,7 +60,7 @@ public class FollowController {
             List<Follow> follows = followRepository.findAll();
             for (Follow follow : follows) {
                 if (follow.getUser().getUserID() == user.getUserID() && follow.getPlayer().getPlayerID() == player.getPlayerID()) {
-                    followRepository.delete(follow);
+                    followRepository.delete(follow); // usunięcie obserwacji zawodnika z bazy danych
                     break;
                 }
             }
@@ -68,5 +68,4 @@ public class FollowController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
 }

@@ -7,17 +7,21 @@ Application for tennis fans where you can follow your favourite players to get t
 * Gradle
 * JUnit5
 * MySQL database
-* HTML, CSS
+* HTML, CSS, vue.js
 
 ## Features
-* Creating an account and login to service
+* Create an account and login to service
+* Check the results of ongoing matches
 * Scroll the WTA and ATP rankings
-* Following your favourite players
-* Get more information about following players like score of their last match and score in their last tournaments
+* Follow your favourite players
+* Get more information about following players like score of their last match with statistics, score in their last tournaments and next scheduled match
 
 ## Site
 Main website
 ![Main Page](images/main_page.png)
+
+Results of ongoing matches
+![Results](images/matches_live.png)
 
 Ranking
 ![Ranking](images/ranking.png)
@@ -25,8 +29,11 @@ Ranking
 Account
 ![Account](images/account.png)
 
-Details about followed player
-![Player](images/player.png)
+Player profile
+![Player](images/player_profile.png)
+
+Match statistics:
+![Stats](images/stats.png)
 
 ## Other information
 Application created with TennisAPI: https://rapidapi.com/fluis.lacasse/api/tennisapi1/ \

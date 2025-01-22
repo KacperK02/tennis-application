@@ -36,6 +36,11 @@ public class PasswordValidationTests {
     }
 
     @Test
+    public void testInvalidNoDigit() {
+        assertFalse(userService.isPasswordValid("lowercase!"));
+    }
+
+    @Test
     public void testInvalidNoSpecialCharacter() {
         assertFalse(userService.isPasswordValid("MixedCase123"));
     }

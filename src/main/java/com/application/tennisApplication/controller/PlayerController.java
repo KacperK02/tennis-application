@@ -24,16 +24,16 @@ public class PlayerController {
     @GetMapping("/getAllWTAPlayers")
     @ResponseBody
     public List<Player> getWTAPlayers(){
-        List <Player> players = playerService.getAllWTAPlayers();
-        players.sort(Comparator.comparingInt(Player::getRanking));
+        List <Player> players = playerService.getAllWTAPlayers(); // pobierz z bazy danych wszystkie tenisistki
+        players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie po pozycji w rankingu
         return players;
     }
 
     @GetMapping("/getAllATPPlayers")
     @ResponseBody
     public List<Player> getATPPlayers(){
-        List <Player> players = playerService.getAllATPPlayers();
-        players.sort(Comparator.comparingInt(Player::getRanking));
+        List <Player> players = playerService.getAllATPPlayers(); // pobierz z bazy danych wszystkich tenisistów
+        players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie po pozycji w rankingu
         return players;
     }
 
@@ -63,10 +63,10 @@ public class PlayerController {
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
             APIConnection apiConnection = new APIConnection();
-            String response = apiConnection.getPlayerNearEvent(String.valueOf(player.getTeamid()));
+            String response = apiConnection.getPlayerNearEvent(String.valueOf(player.getTeamid())); // pobieranie danych o meczach z RapidAPI
             List<Match> matches = new ArrayList<>();
-            Match lastMatch = playerService.getPlayerMatch(response, "previous");
-            Match nextMatch = playerService.getPlayerMatch(response, "next");
+            Match lastMatch = playerService.getPlayerMatch(response, "previous"); // informacje o poprzednim meczu
+            Match nextMatch = playerService.getPlayerMatch(response, "next"); // informacje o następnym meczu
             matches.add(lastMatch);
             matches.add(nextMatch);
             return ResponseEntity.ok(matches);

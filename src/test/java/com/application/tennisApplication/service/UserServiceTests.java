@@ -9,5 +9,4 @@ import org.junit.platform.suite.api.IncludeTags;
 @IncludeTags({"EmailValidation", "PasswordValidation"})
 public class UserServiceTests {
 
-
 }

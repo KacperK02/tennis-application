@@ -54,9 +54,9 @@ public class PlayerServiceImpl implements PlayerService{
     public void updateRanking() throws IOException {
         List <Player> oldRankingPlayers = getAllPlayers();
         List <Player> newRankingPlayers = new ArrayList<>();
-        APIConnection apiConnection = new APIConnection();
-        apiConnection.getWTARanking();
-        apiConnection.getATPRanking();
+        APIConnection apiConnection = new APIConnection(); // utworzenie połączenia do RapidAPI
+        apiConnection.getWTARanking(); // pobranie z RapidAPI aktualnego rankingu tenisistek
+        apiConnection.getATPRanking(); // pobranie z RapidAPI aktualnego rankingu tenisistów
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(new File("src/main/resources/API/WTAranking.json"));
@@ -67,14 +67,14 @@ public class PlayerServiceImpl implements PlayerService{
                 String name = jsonNode.get("rankings").get(i).get("rowName").asText();
                 String gender = jsonNode.get("rankings").get(i).get("team").get("gender").asText();
                 String country = jsonNode.path("rankings").get(i).path("team").path("country").path("name").asText();
-                if (country == null || country.isEmpty()) country = ""; // one of ATP Players doesn't represent any country
+                if (country == null || country.isEmpty()) country = "";
                 int ranking = jsonNode.path("rankings").get(i).path("ranking").asInt();
                 int points = jsonNode.path("rankings").get(i).path("points").asInt();
                 int tournamentsPlayed = jsonNode.path("rankings").get(i).path("tournamentsPlayed").asInt();
                 int teamid = jsonNode.path("rankings").get(i).path("team").path("id").asInt();
 
                 Player player = playerRepository.getPlayerByTeamid(teamid);
-                if (player != null){
+                if (player != null){ // zawodnik istnieje w poprzednim rankingu
                     player.setName(name);
                     player.setGender(gender);
                     player.setRanking(ranking);
@@ -84,7 +84,7 @@ public class PlayerServiceImpl implements PlayerService{
                     newRankingPlayers.add(player);
                     playerRepository.save(player);
                 }
-                else {
+                else { // nowy zawodnik
                     Player newPlayer = new Player(name, gender, country, ranking, points, tournamentsPlayed, teamid);
                     newRankingPlayers.add(newPlayer);
                     playerRepository.save(newPlayer);
@@ -158,8 +158,8 @@ public class PlayerServiceImpl implements PlayerService{
             }
 
             if (Objects.equals(node.path(i).path("groupName").asText(), "Points")) {
-                String stat1 = node.path(i).path("statisticsItems").path("Service points won").path(player).asText(null);
-                String stat2 = node.path(i).path("statisticsItems").path("Receiver points won").path(player).asText(null);
+                String stat1 = node.path(i).path("statisticsItems").path(1).path(player).asText(null);
+                String stat2 = node.path(i).path("statisticsItems").path(2).path(player).asText(null);
                 int totalPoints = 0;
                 String strTotalPoints;
                 if (stat1 != null && stat2 != null) totalPoints = Integer.parseInt(stat1) + Integer.parseInt(stat2);

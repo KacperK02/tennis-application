@@ -31,7 +31,7 @@ export default {
   methods: {
     checkIfFollowing() {
       axios.get('http://localhost:8080/follow/isFollowing/' + this.player.playerID, {
-        withCredentials: true // Przesyłaj ciasteczka (sesję)
+        withCredentials: true
       })
         .then(response => {
           this.isFollowing = response.data; // Ustaw stan obserwowania
@@ -43,13 +43,13 @@ export default {
     handleFollow() {
       // Sprawdź, czy użytkownik jest zalogowany
       axios.get('http://localhost:8080/checkSession', {
-        withCredentials: true // Umożliwia przesyłanie ciasteczek sesji
+        withCredentials: true
       })
       .then(response => {
         if (response.data.loggedIn) {
-          this.followPlayer(); // Użytkownik jest zalogowany, kontynuuj
+          this.followPlayer();
         } else {
-          alert("Musisz być zalogowany, aby obserwować gracza.") // Użytkownik nie jest zalogowany
+          alert("Musisz być zalogowany, aby obserwować gracza.")
         }
       })
       .catch(error => {
@@ -58,13 +58,12 @@ export default {
     },
     followPlayer() {
       axios.post('http://localhost:8080/follow/followPlayer', 
-      JSON.stringify(this.player.playerID),  // Wysyłanie danych w formacie JSON
-      {
-      headers: {
-        'Content-Type': 'application/json' // Ustawienie nagłówka
+      JSON.stringify(this.player.playerID),{
+        headers: {
+          'Content-Type': 'application/json'
         },
-      withCredentials: true // Przesyłaj ciasteczka sesji
-        }
+        withCredentials: true
+      }
         )
         .then(() => {
           this.isFollowing = true; // Ustaw stan na "obserwowany"

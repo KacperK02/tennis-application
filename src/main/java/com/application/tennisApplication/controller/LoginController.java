@@ -4,13 +4,11 @@ import com.application.tennisApplication.model.User;
 import com.application.tennisApplication.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -53,7 +51,7 @@ public class LoginController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession session) {
-        session.invalidate(); // Unieważnienie sesji
+        session.invalidate();
         return ResponseEntity.ok().build();
     }
 
