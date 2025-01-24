@@ -1,4 +1,4 @@
-# ZKortu.pl (FromCourt.com)
+# NaKorcie.pl (OnCourt.com)
 Application for tennis fans where you can follow your favourite players to get the newest information about their matches.
 
 ## Technologies
