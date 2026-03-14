@@ -6,9 +6,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
 
 public class APIConnection {
@@ -87,7 +84,7 @@ public class APIConnection {
         return getResponseFromAPI("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/tournaments/last");
     }
 
-    public void getPlayerPhoto(String teamId) {
+    public byte[] getPlayerPhoto(String teamId) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("https://tennisapi1.p.rapidapi.com/api/tennis/team/" + teamId + "/image"))
@@ -98,14 +95,12 @@ public class APIConnection {
 
             HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-            byte[] imageBytes = response.body();
-            String filePath = "frontend/src/assets/playerPhotos/" + teamId + ".png";
-            Path path = Paths.get(filePath);
-            Files.write(path, imageBytes);
+            return response.body();
         }
         catch (Exception e){
             System.out.println("Failed to get data from API. " + e);
         }
+        return null;
     }
 
     public String getPlayerNearEvent(String teamId) {

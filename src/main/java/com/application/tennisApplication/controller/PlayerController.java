@@ -7,34 +7,95 @@ import com.application.tennisApplication.model.Tournament;
 import com.application.tennisApplication.service.PlayerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
-@Controller
+@RestController
 @CrossOrigin
 public class PlayerController {
     @Autowired
     PlayerService playerService;
 
     @GetMapping("/getAllWTAPlayers")
-    @ResponseBody
-    public List<Player> getWTAPlayers(){
+    public ResponseEntity<List<Player>> getWTAPlayers(){
         List <Player> players = playerService.getAllWTAPlayers(); // pobierz z bazy danych wszystkie tenisistki
         players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie po pozycji w rankingu
-        return players;
+
+        //CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic();
+        //return ResponseEntity.ok().cacheControl(cacheControl).body(players);
+
+        LocalDateTime now = LocalDateTime.now();
+        CacheControl cacheControl;
+
+        // Definiujemy okno aktualizacji: Poniedziałek od 00:00 do 14:00 (możesz dostosować godzinę)
+        boolean isUpdateWindow = now.getDayOfWeek() == DayOfWeek.MONDAY && now.getHour() < 14;
+
+        if (isUpdateWindow) {
+            // Poniedziałek rano: nie ufamy cache'owi w ciemno.
+            // Zmuszamy przeglądarkę do zapytania serwera i użycia ETaga.
+            cacheControl = CacheControl.noCache();
+        } else {
+            // Reszta tygodnia: ranking na pewno się nie zmieni.
+            // Obliczamy czas (w sekundach) do następnego poniedziałku o 00:00.
+            LocalDateTime nextMonday = now.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                    .withHour(0).withMinute(0).withSecond(0);
+
+            long secondsUntilNextMonday = Duration.between(now, nextMonday).getSeconds();
+
+            // Mówimy przeglądarce: "Nie pytaj mnie o nic przez tyle sekund"
+            cacheControl = CacheControl.maxAge(secondsUntilNextMonday, TimeUnit.SECONDS).cachePublic();
+        }
+
+        return ResponseEntity.ok()
+                .cacheControl(cacheControl)
+                .body(players);
     }
 
+
     @GetMapping("/getAllATPPlayers")
-    @ResponseBody
-    public List<Player> getATPPlayers(){
-        List <Player> players = playerService.getAllATPPlayers(); // pobierz z bazy danych wszystkich tenisistów
+    public ResponseEntity<List<Player>> getATPPlayers() {
+        List<Player> players = playerService.getAllATPPlayers(); // pobierz z bazy danych wszystkich tenisistów
         players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie po pozycji w rankingu
-        return players;
+        //CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic();
+        //return ResponseEntity.ok().cacheControl(cacheControl).body(players);
+
+        LocalDateTime now = LocalDateTime.now();
+        CacheControl cacheControl;
+
+        // Definiujemy okno aktualizacji: Poniedziałek od 00:00 do 14:00 (możesz dostosować godzinę)
+        boolean isUpdateWindow = now.getDayOfWeek() == DayOfWeek.MONDAY && now.getHour() < 14;
+
+        if (isUpdateWindow) {
+            // Poniedziałek rano: nie ufamy cache'owi w ciemno.
+            // Zmuszamy przeglądarkę do zapytania serwera i użycia ETaga.
+            cacheControl = CacheControl.noCache();
+        } else {
+            // Reszta tygodnia: ranking na pewno się nie zmieni.
+            // Obliczamy czas (w sekundach) do następnego poniedziałku o 00:00.
+            LocalDateTime nextMonday = now.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                    .withHour(0).withMinute(0).withSecond(0);
+
+            long secondsUntilNextMonday = Duration.between(now, nextMonday).getSeconds();
+
+            // Mówimy przeglądarce: "Nie pytaj mnie o nic przez tyle sekund"
+            cacheControl = CacheControl.maxAge(secondsUntilNextMonday, TimeUnit.SECONDS).cachePublic();
+        }
+
+        return ResponseEntity.ok()
+                .cacheControl(cacheControl)
+                .body(players);
     }
 
     @GetMapping("/player/{id}")
@@ -87,21 +148,16 @@ public class PlayerController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/player/photoExists/{teamID}")
-    public ResponseEntity<Boolean> checkPhotoExists(@PathVariable String teamID) {
-        String photoPath = "frontend/src/assets/playerPhotos/" + teamID + ".png";
-        File file = new File(photoPath);
-        if (file.exists()) {
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.ok(false);
-        }
-    }
+    // Ustawiamy produces na typ obrazka, np. image/png lub image/jpeg
+    @GetMapping(value = "/player/photo/{teamID}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> getPlayerPhoto(@PathVariable String teamID) {
 
-    @PostMapping("/player/fetchPhoto/{teamID}")
-    public ResponseEntity<Void> fetchPlayerPhoto(@PathVariable String teamID) {
         APIConnection apiConnection = new APIConnection();
-        apiConnection.getPlayerPhoto(teamID);
-        return ResponseEntity.ok().build();
+
+        byte[] imageBytes = apiConnection.getPlayerPhoto(teamID);
+
+        CacheControl cacheControl = CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic();
+
+        return ResponseEntity.ok().cacheControl(cacheControl).body(imageBytes);
     }
 }

@@ -3,7 +3,7 @@
 <div class="player-info">
   <div v-if="player && enemy" class="player-details">
     <h1>{{ matches[0].firstPlayerInfo[3] == player.teamid ? player.name : enemy.name }}</h1>
-    <img :src="getPlayerPhotoUrl(matches[0].firstPlayerInfo[3] == player.teamid ? player.teamid : enemy.teamid)" alt="Zdjęcie zawodnika" />
+    <img :src="`http://localhost:8080/player/photo/${(matches[0].firstPlayerInfo[3] == player.teamid ? player.teamid : enemy.teamid)}`" alt="Zdjęcie zawodnika" />
     <p><strong>Kraj:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? player.country : enemy.country }}</p>
     <p><strong>Ranking:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? player.ranking : enemy.ranking }}</p>
     <p><strong>Punkty:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? player.points : enemy.points }}</p>
@@ -12,7 +12,7 @@
 
   <div v-if="player && !enemy" class="player-details">
       <h1>{{ player.name }}</h1>
-      <img :src="getPlayerPhotoUrl(player.teamid)" alt="Zdjęcie zawodnika" />
+      <img :src="`http://localhost:8080/player/photo/${player.teamid}`" alt="Zdjęcie zawodnika" />
       <p><strong>Kraj:</strong> {{ player.country }}</p>
       <p><strong>Ranking:</strong> {{ player.ranking }}</p>
       <p><strong>Punkty:</strong> {{ player.points }}</p>
@@ -76,7 +76,7 @@
 
     <div v-if="player && enemy" class="player-details">
       <h1>{{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.name : player.name }}</h1>
-      <img :src="getPlayerPhotoUrl(matches[0].firstPlayerInfo[3] == player.teamid ? enemy.teamid : player.teamid)" alt="Zdjęcie zawodnika" />
+      <img :src="`http://localhost:8080/player/photo/${(matches[0].firstPlayerInfo[3] == player.teamid ? enemy.teamid : player.teamid)}`" alt="Zdjęcie zawodnika" />
       <p><strong>Kraj:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.country : player.country }}</p>
       <p><strong>Ranking:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.ranking : player.ranking }}</p>
       <p><strong>Punkty:</strong> {{ matches[0].firstPlayerInfo[3] == player.teamid ? enemy.points : player.points }}</p>
@@ -175,7 +175,6 @@
 
       await this.fetchMatchStats(matchId);
       await this.fetchEnemyPlayer();
-      await this.checkPhotoExists();
     },
     methods: {
       goBack() {
@@ -195,13 +194,6 @@
           console.error("Błąd podczas pobierania statystyk:", error);
         }
       },
-      getPlayerPhotoUrl(teamid) {
-      try {
-        return require(`@/assets/playerPhotos/${teamid}.png`);
-      } catch (error) {
-        return require('@/assets/playerPhotos/placeholder.png');
-      }
-    },
     async fetchEnemyPlayer() {
       let response = null;
       try {
@@ -224,38 +216,7 @@
       } catch (error) {
         console.error('Błąd:', error);
       }
-    },
-    async checkPhotoExists() {
-        if (this.enemy && this.enemy.teamid) {
-          try {
-          const response = await fetch(`http://localhost:8080/player/photoExists/${this.enemy.teamid}`);
-          const exists = await response.json();
-          if (exists) {
-            this.photoExists = true;
-            this.photoUrl = `src/assets/playerPhotos/${this.enemy.teamid}.png`;
-          } else {
-            await this.fetchPhotoFromAPI();  // Pobierz zdjęcie z API, jeśli nie istnieje
-          }
-        } catch (error) {
-          console.error('Błąd podczas sprawdzania zdjęcia:', error);
-        }
-        }
-      },
-      async fetchPhotoFromAPI() {
-        if (this.enemy && this.enemy.teamid) {
-          try {
-          const response = await fetch(`http://localhost:8080/player/fetchPhoto/${this.enemy.teamid}`, {
-            method: 'POST'
-          });
-          if (response.ok) {
-            this.photoExists = true;
-            this.photoUrl = `src/assets/playerPhotos/${this.enemy.teamid}.png`;
-          }
-        } catch (error) {
-          console.error('Błąd podczas pobierania zdjęcia z API:', error);
-        }
-        }
-      }
+    }
     }
   };
   </script>

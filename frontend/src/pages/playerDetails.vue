@@ -2,7 +2,7 @@
   <div v-if="player" class="player-info">
     <div class="player-details">
       <h1>{{ player.name }}</h1>
-      <img :src="getPlayerPhotoUrl(player.teamid)" alt="Zdjęcie zawodnika" />
+      <img :src="`http://localhost:8080/player/photo/${player.teamid}`" alt="Zdjęcie zawodnika" />
       <p><strong>Kraj:</strong> {{ player.country }}</p>
       <p><strong>Ranking:</strong> {{ player.ranking }}</p>
       <p><strong>Punkty:</strong> {{ player.points }}</p>
@@ -160,13 +160,6 @@ export default {
     this.fetchLastTournaments();
   },
   methods: {
-    getPlayerPhotoUrl(teamid) {
-      try {
-        return require(`@/assets/playerPhotos/${teamid}.png`);
-      } catch (error) {
-        return require('@/assets/playerPhotos/placeholder.png');
-      }
-    },
     async fetchPlayerDetails() {
       try {
         const response = await fetch(`http://localhost:8080/player/${this.id}`, {
