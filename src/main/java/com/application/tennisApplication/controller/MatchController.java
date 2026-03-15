@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,9 @@ public class MatchController {
     @Autowired
     private PlayerService playerService;
 
+    @Value("${app.cache.strategy:http}")
+    private String cacheStrategy;
+
     @GetMapping("/getLiveMatches")
     public ResponseEntity<List<Match>> getLiveMatches() throws JsonProcessingException {
         APIConnection apiConnection = new APIConnection();
@@ -49,23 +53,34 @@ public class MatchController {
 
     @GetMapping("/getMatchStats/{id}")
     public ResponseEntity<List<HashMap<String, String>>> getMatchStats(@PathVariable int id) throws JsonProcessingException {
-        APIConnection apiConnection = new APIConnection();
-        String response = apiConnection.getMatchStats(id);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(response);
-        JsonNode node = jsonNode.path("statistics").path(0).path("groups");
 
-        //aces, double faults, 1st service, 1st serve point won, 2nd service points won, fh winners, bh winners,
-        // fh errors, bh errors, break points converted
-        List<HashMap<String, String>> matchStats = new ArrayList<>();
-        HashMap<String, String> firstPlayerStats = playerService.getPlayerMatchStats(node, "home");
-        HashMap<String, String> secondPlayerStats = playerService.getPlayerMatchStats(node, "away");
+        if ("server".equalsIgnoreCase(cacheStrategy)) {
+            // ==========================================
+            // STRATEGIA 1: CAFFEINE (Server-side)
+            // ==========================================
 
-        matchStats.add(firstPlayerStats);
-        matchStats.add(secondPlayerStats);
+            // Pobieramy gotowe, sparsowane obiekty z pamięci RAM serwera
+            List<HashMap<String, String>> stats = matchService.getMatchStatsCached(id);
 
-        CacheControl cacheControl = CacheControl.maxAge(365, TimeUnit.DAYS).cachePrivate();
+            // Zmuszamy przeglądarkę do zapytania serwera (na potrzeby testów wydajnościowych)
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.noStore().mustRevalidate())
+                    .body(stats);
 
-        return ResponseEntity.ok().cacheControl(cacheControl).body(matchStats);
+        } else {
+            // ==========================================
+            // STRATEGIA 2: HTTP CACHE (Browser-side)
+            // ==========================================
+
+            // Wykonujemy pełne zapytanie do API i parsowanie JSON-a za każdym razem,
+            // gdy przeglądarka nie ma tego w swoim cache
+            List<HashMap<String, String>> stats = matchService.getMatchStatsUncached(id);
+
+            CacheControl cacheControl = CacheControl.maxAge(365, TimeUnit.DAYS).cachePrivate();
+
+            return ResponseEntity.ok()
+                    .cacheControl(cacheControl)
+                    .body(stats);
+        }
     }
 }

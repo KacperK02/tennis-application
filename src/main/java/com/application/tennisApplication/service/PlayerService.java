@@ -22,4 +22,8 @@ public interface PlayerService {
     List<String> getPlayerInfo(Player player, String seed);
     Match getPlayerMatch(String response, String whichMatch) throws JsonProcessingException;
     HashMap<String, String> getPlayerMatchStats(JsonNode node, String player);
+    List<Player> getSortedWTAPlayersCached();
+    List<Player> getSortedATPPlayersCached();
+    byte[] getPlayerPhotoCached(String teamID);
+    byte[] getPlayerPhotoUncached(String teamID);
 }

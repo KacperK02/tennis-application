@@ -1,14 +1,23 @@
 package com.application.tennisApplication.service;
 
+import com.application.tennisApplication.API.APIConnection;
 import com.application.tennisApplication.model.Match;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class MatchServiceImpl implements MatchService {
+
+    @Autowired
+    private PlayerService playerService;
 
     @Override
     public int whoServes(JsonNode node, List<Integer> firstPlayerScore, List<Integer> secondPlayerScore, List<Integer> gamePoints) {
@@ -171,5 +180,33 @@ public class MatchServiceImpl implements MatchService {
         int service = whoServes(node, firstPlayerScore, secondPlayerScore, gamePoints);
 
         return new Match(id, nameOfTournament, rankOfTournament, surface, round, status, firstPlayerInfo, secondPlayerInfo, winner, firstPlayerScore, secondPlayerScore, gamePoints, service);
+    }
+
+    @Cacheable(value = "matchStatsCache", key = "#id")
+    public List<HashMap<String, String>> getMatchStatsCached(int id) throws JsonProcessingException {
+        return fetchAndParseMatchStats(id);
+    }
+
+    // Metoda badawcza dla HTTP Cache (zawsze wykonuje pełną pracę)
+    public List<HashMap<String, String>> getMatchStatsUncached(int id) throws JsonProcessingException {
+        return fetchAndParseMatchStats(id);
+    }
+
+    public List<HashMap<String, String>> fetchAndParseMatchStats(int id) throws JsonProcessingException {
+        APIConnection apiConnection = new APIConnection();
+        String response = apiConnection.getMatchStats(id);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(response);
+        JsonNode node = jsonNode.path("statistics").path(0).path("groups");
+
+        List<HashMap<String, String>> matchStats = new ArrayList<>();
+        HashMap<String, String> firstPlayerStats = playerService.getPlayerMatchStats(node, "home");
+        HashMap<String, String> secondPlayerStats = playerService.getPlayerMatchStats(node, "away");
+
+        matchStats.add(firstPlayerStats);
+        matchStats.add(secondPlayerStats);
+
+        return matchStats;
     }
 }

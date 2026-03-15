@@ -7,6 +7,8 @@ import com.application.tennisApplication.model.Tournament;
 import com.application.tennisApplication.service.PlayerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,74 +30,98 @@ public class PlayerController {
     @Autowired
     PlayerService playerService;
 
+    @Value("${app.cache.strategy:http}")
+    private String cacheStrategy;
+
     @GetMapping("/getAllWTAPlayers")
     public ResponseEntity<List<Player>> getWTAPlayers(){
-        List <Player> players = playerService.getAllWTAPlayers(); // pobierz z bazy danych wszystkie tenisistki
-        players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie po pozycji w rankingu
+        if ("server".equalsIgnoreCase(cacheStrategy)) {
+            // ==========================================
+            // STRATEGIA 1: CAFFEINE (Server-side)
+            // ==========================================
 
-        //CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic();
-        //return ResponseEntity.ok().cacheControl(cacheControl).body(players);
+            // Pobieramy gotową, posortowaną listę prosto z pamięci RAM serwera (Caffeine)
+            List<Player> cachedPlayers = playerService.getSortedWTAPlayersCached();
 
-        LocalDateTime now = LocalDateTime.now();
-        CacheControl cacheControl;
+            // Zmuszamy przeglądarkę, by nie cache'owała, żeby testy Caffeine były wiarygodne
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.noStore().mustRevalidate())
+                    .body(cachedPlayers);
 
-        // Definiujemy okno aktualizacji: Poniedziałek od 00:00 do 14:00 (możesz dostosować godzinę)
-        boolean isUpdateWindow = now.getDayOfWeek() == DayOfWeek.MONDAY && now.getHour() < 14;
-
-        if (isUpdateWindow) {
-            // Poniedziałek rano: nie ufamy cache'owi w ciemno.
-            // Zmuszamy przeglądarkę do zapytania serwera i użycia ETaga.
-            cacheControl = CacheControl.noCache();
         } else {
-            // Reszta tygodnia: ranking na pewno się nie zmieni.
-            // Obliczamy czas (w sekundach) do następnego poniedziałku o 00:00.
-            LocalDateTime nextMonday = now.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-                    .withHour(0).withMinute(0).withSecond(0);
+            // ==========================================
+            // STRATEGIA 2: HTTP CACHE (Browser-side)
+            // ==========================================
 
-            long secondsUntilNextMonday = Duration.between(now, nextMonday).getSeconds();
+            // Pobieramy standardowo z bazy (lub zwykłego serwisu) i sortujemy "w locie"
+            List<Player> players = playerService.getAllWTAPlayers();
+            players.sort(Comparator.comparingInt(Player::getRanking));
 
-            // Mówimy przeglądarce: "Nie pytaj mnie o nic przez tyle sekund"
-            cacheControl = CacheControl.maxAge(secondsUntilNextMonday, TimeUnit.SECONDS).cachePublic();
+            LocalDateTime now = LocalDateTime.now();
+            CacheControl cacheControl;
+
+            boolean isUpdateWindow = now.getDayOfWeek() == DayOfWeek.MONDAY && now.getHour() < 14;
+
+            if (isUpdateWindow) {
+                cacheControl = CacheControl.noCache();
+            } else {
+                LocalDateTime nextMonday = now.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                        .withHour(0).withMinute(0).withSecond(0);
+
+                long secondsUntilNextMonday = Duration.between(now, nextMonday).getSeconds();
+                cacheControl = CacheControl.maxAge(secondsUntilNextMonday, TimeUnit.SECONDS).cachePublic();
+            }
+
+            return ResponseEntity.ok()
+                    .cacheControl(cacheControl)
+                    .body(players);
         }
-
-        return ResponseEntity.ok()
-                .cacheControl(cacheControl)
-                .body(players);
     }
 
 
     @GetMapping("/getAllATPPlayers")
     public ResponseEntity<List<Player>> getATPPlayers() {
-        List<Player> players = playerService.getAllATPPlayers(); // pobierz z bazy danych wszystkich tenisistów
-        players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie po pozycji w rankingu
-        //CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic();
-        //return ResponseEntity.ok().cacheControl(cacheControl).body(players);
+        if ("server".equalsIgnoreCase(cacheStrategy)) {
+            // ==========================================
+            // STRATEGIA 1: CAFFEINE (Server-side)
+            // ==========================================
 
-        LocalDateTime now = LocalDateTime.now();
-        CacheControl cacheControl;
+            // Pobieramy gotową, posortowaną listę prosto z pamięci RAM serwera (Caffeine)
+            List<Player> cachedPlayers = playerService.getSortedATPPlayersCached();
 
-        // Definiujemy okno aktualizacji: Poniedziałek od 00:00 do 14:00 (możesz dostosować godzinę)
-        boolean isUpdateWindow = now.getDayOfWeek() == DayOfWeek.MONDAY && now.getHour() < 14;
+            // Zmuszamy przeglądarkę, by nie cache'owała, żeby testy Caffeine były wiarygodne
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.noStore().mustRevalidate())
+                    .body(cachedPlayers);
 
-        if (isUpdateWindow) {
-            // Poniedziałek rano: nie ufamy cache'owi w ciemno.
-            // Zmuszamy przeglądarkę do zapytania serwera i użycia ETaga.
-            cacheControl = CacheControl.noCache();
         } else {
-            // Reszta tygodnia: ranking na pewno się nie zmieni.
-            // Obliczamy czas (w sekundach) do następnego poniedziałku o 00:00.
-            LocalDateTime nextMonday = now.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-                    .withHour(0).withMinute(0).withSecond(0);
+            // ==========================================
+            // STRATEGIA 2: HTTP CACHE (Browser-side)
+            // ==========================================
 
-            long secondsUntilNextMonday = Duration.between(now, nextMonday).getSeconds();
+            // Pobieramy standardowo z bazy (lub zwykłego serwisu) i sortujemy "w locie"
+            List<Player> players = playerService.getAllATPPlayers();
+            players.sort(Comparator.comparingInt(Player::getRanking));
 
-            // Mówimy przeglądarce: "Nie pytaj mnie o nic przez tyle sekund"
-            cacheControl = CacheControl.maxAge(secondsUntilNextMonday, TimeUnit.SECONDS).cachePublic();
+            LocalDateTime now = LocalDateTime.now();
+            CacheControl cacheControl;
+
+            boolean isUpdateWindow = now.getDayOfWeek() == DayOfWeek.MONDAY && now.getHour() < 14;
+
+            if (isUpdateWindow) {
+                cacheControl = CacheControl.noCache();
+            } else {
+                LocalDateTime nextMonday = now.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                        .withHour(0).withMinute(0).withSecond(0);
+
+                long secondsUntilNextMonday = Duration.between(now, nextMonday).getSeconds();
+                cacheControl = CacheControl.maxAge(secondsUntilNextMonday, TimeUnit.SECONDS).cachePublic();
+            }
+
+            return ResponseEntity.ok()
+                    .cacheControl(cacheControl)
+                    .body(players);
         }
-
-        return ResponseEntity.ok()
-                .cacheControl(cacheControl)
-                .body(players);
     }
 
     @GetMapping("/player/{id}")
@@ -148,16 +174,33 @@ public class PlayerController {
         return ResponseEntity.notFound().build();
     }
 
-    // Ustawiamy produces na typ obrazka, np. image/png lub image/jpeg
     @GetMapping(value = "/player/photo/{teamID}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getPlayerPhoto(@PathVariable String teamID) {
 
-        APIConnection apiConnection = new APIConnection();
+        if ("server".equalsIgnoreCase(cacheStrategy)) {
+            // ==========================================
+            // STRATEGIA 1: CAFFEINE (Server-side)
+            // ==========================================
+            byte[] imageBytes = playerService.getPlayerPhotoCached(teamID);
 
-        byte[] imageBytes = apiConnection.getPlayerPhoto(teamID);
+            // Zmuszamy przeglądarkę do każdorazowego odpytania serwera,
+            // aby zmierzyć rzeczywisty czas odpowiedzi Caffeine w badaniach.
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.noStore().mustRevalidate())
+                    .body(imageBytes);
 
-        CacheControl cacheControl = CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic();
+        } else {
+            // ==========================================
+            // STRATEGIA 2: HTTP CACHE (Browser-side)
+            // ==========================================
+            byte[] imageBytes = playerService.getPlayerPhotoUncached(teamID);
 
-        return ResponseEntity.ok().cacheControl(cacheControl).body(imageBytes);
+            // Klasyczny cache po stronie przeglądarki na 365 dni
+            CacheControl cacheControl = CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic();
+
+            return ResponseEntity.ok()
+                    .cacheControl(cacheControl)
+                    .body(imageBytes);
+        }
     }
 }

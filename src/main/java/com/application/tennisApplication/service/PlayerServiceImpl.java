@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -48,6 +49,34 @@ public class PlayerServiceImpl implements PlayerService{
     @Override
     public Optional<Player> getPlayerByTeamId(int teamid) {
         return Optional.ofNullable(playerRepository.getPlayerByTeamid(teamid));
+    }
+
+    @Cacheable("wtaPlayersCache")
+    public List<Player> getSortedWTAPlayersCached() {
+        List<Player> players = getAllWTAPlayers(); // pobranie z bazy
+        players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie przed umieszczeniem w cache
+        return players;
+    }
+
+    @Cacheable("atpPlayersCache")
+    public List<Player> getSortedATPPlayersCached() {
+        List<Player> players = getAllATPPlayers(); // pobranie z bazy
+        players.sort(Comparator.comparingInt(Player::getRanking)); // sortowanie przed umieszczeniem w cache
+        return players;
+    }
+
+    // Metoda dla Caffeine. Używamy teamID jako klucza w pamięci RAM.
+    @Cacheable(value = "playerPhotosCache", key = "#teamID")
+    public byte[] getPlayerPhotoCached(String teamID) {
+        System.out.println("Pobieram zdjęcie");
+        APIConnection apiConnection = new APIConnection();
+        return apiConnection.getPlayerPhoto(teamID);
+    }
+
+    // Metoda dla HTTP Cache (zawsze uderza do zewnętrznego API)
+    public byte[] getPlayerPhotoUncached(String teamID) {
+        APIConnection apiConnection = new APIConnection();
+        return apiConnection.getPlayerPhoto(teamID);
     }
 
     @Override
