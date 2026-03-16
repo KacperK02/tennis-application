@@ -2,8 +2,10 @@ package com.application.tennisApplication.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
-public class Player {
+public class Player implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int PlayerID;

@@ -37,13 +37,11 @@ public class PlayerController {
     public ResponseEntity<List<Player>> getWTAPlayers(){
         if ("server".equalsIgnoreCase(cacheStrategy)) {
             // ==========================================
-            // STRATEGIA 1: CAFFEINE (Server-side)
+            // STRATEGIA 1: Cache serwerowy + Redis
             // ==========================================
 
-            // Pobieramy gotową, posortowaną listę prosto z pamięci RAM serwera (Caffeine)
             List<Player> cachedPlayers = playerService.getSortedWTAPlayersCached();
 
-            // Zmuszamy przeglądarkę, by nie cache'owała, żeby testy Caffeine były wiarygodne
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.noStore().mustRevalidate())
                     .body(cachedPlayers);
@@ -53,7 +51,6 @@ public class PlayerController {
             // STRATEGIA 2: HTTP CACHE (Browser-side)
             // ==========================================
 
-            // Pobieramy standardowo z bazy (lub zwykłego serwisu) i sortujemy "w locie"
             List<Player> players = playerService.getAllWTAPlayers();
             players.sort(Comparator.comparingInt(Player::getRanking));
 
@@ -86,10 +83,8 @@ public class PlayerController {
             // STRATEGIA 1: CAFFEINE (Server-side)
             // ==========================================
 
-            // Pobieramy gotową, posortowaną listę prosto z pamięci RAM serwera (Caffeine)
             List<Player> cachedPlayers = playerService.getSortedATPPlayersCached();
 
-            // Zmuszamy przeglądarkę, by nie cache'owała, żeby testy Caffeine były wiarygodne
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.noStore().mustRevalidate())
                     .body(cachedPlayers);
@@ -99,7 +94,6 @@ public class PlayerController {
             // STRATEGIA 2: HTTP CACHE (Browser-side)
             // ==========================================
 
-            // Pobieramy standardowo z bazy (lub zwykłego serwisu) i sortujemy "w locie"
             List<Player> players = playerService.getAllATPPlayers();
             players.sort(Comparator.comparingInt(Player::getRanking));
 

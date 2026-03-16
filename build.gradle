@@ -26,6 +26,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'com.github.ben-manes.caffeine:caffeine'
 	//dodatkowe zależności biblioteki JUnit
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'

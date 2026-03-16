@@ -8,6 +8,12 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.Arrays;
 
@@ -19,7 +25,7 @@ public class CacheResearchConfig {
     private String cacheAlgorithm;
 
     @Bean
-    public CacheManager cacheManager() {
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         System.out.println("Inicjalizacja środowiska badawczego. Algorytm: " + cacheAlgorithm.toUpperCase());
 
         // LIMIT DO BADAŃ: Ustawiamy maksymalny rozmiar na bardzo mały.
@@ -55,6 +61,21 @@ public class CacheResearchConfig {
                     new ResearchCache("matchStatsCache", CacheAlgorithms.createFIFOMap(CACHE_MAX_SIZE))
             ));
             return fifoManager;
+        } else if ("redis".equalsIgnoreCase(cacheAlgorithm)) {
+
+            // 1. Domyślna konfiguracja z JSON-em
+            RedisCacheConfiguration jsonConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                    .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                    .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+
+            // 2. Specjalna binarna konfiguracja dla zdjęć
+            RedisCacheConfiguration photoConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                    .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()));
+
+            return RedisCacheManager.builder(redisConnectionFactory)
+                    .cacheDefaults(jsonConfiguration) // Domyślnie używaj JSON-a
+                    .withCacheConfiguration("playerPhotosCache", photoConfiguration) // dla zdjęć użyj binarnej konfiguracji
+                    .build();
         }
 
         throw new IllegalArgumentException("Nieznany algorytm: " + cacheAlgorithm);
