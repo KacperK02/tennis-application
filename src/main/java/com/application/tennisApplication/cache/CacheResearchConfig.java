@@ -20,7 +20,7 @@ import java.util.Arrays;
 @Configuration
 @EnableCaching
 public class CacheResearchConfig {
-    // Nowa flaga w application.properties (np. caffeine, lru, fifo)
+    // Nowa flaga w application.properties (caffeine, lru, fifo, random)
     @Value("${app.cache.algorithm:caffeine}")
     private String cacheAlgorithm;
 
@@ -41,7 +41,6 @@ public class CacheResearchConfig {
             return caffeineManager;
 
         } else if ("lru".equalsIgnoreCase(cacheAlgorithm)) {
-            // KLASYCZNE LRU
             SimpleCacheManager lruManager = new SimpleCacheManager();
             lruManager.setCaches(Arrays.asList(
                     new ResearchCache("wtaPlayersCache", CacheAlgorithms.createLRUMap(CACHE_MAX_SIZE)),
@@ -52,7 +51,6 @@ public class CacheResearchConfig {
             return lruManager;
 
         } else if ("fifo".equalsIgnoreCase(cacheAlgorithm)) {
-            // KLASYCZNE FIFO
             SimpleCacheManager fifoManager = new SimpleCacheManager();
             fifoManager.setCaches(Arrays.asList(
                     new ResearchCache("wtaPlayersCache", CacheAlgorithms.createFIFOMap(CACHE_MAX_SIZE)),
@@ -61,7 +59,17 @@ public class CacheResearchConfig {
                     new ResearchCache("matchStatsCache", CacheAlgorithms.createFIFOMap(CACHE_MAX_SIZE))
             ));
             return fifoManager;
-        } else if ("redis".equalsIgnoreCase(cacheAlgorithm)) {
+        } else if ("random".equalsIgnoreCase(cacheAlgorithm)) {
+            SimpleCacheManager randomManager = new SimpleCacheManager();
+            randomManager.setCaches(Arrays.asList(
+                    new ResearchCache("wtaPlayersCache", CacheAlgorithms.createRandomMap(CACHE_MAX_SIZE)),
+                    new ResearchCache("atpPlayersCache", CacheAlgorithms.createRandomMap(CACHE_MAX_SIZE)),
+                    new ResearchCache("playerPhotosCache", CacheAlgorithms.createRandomMap(CACHE_MAX_SIZE)),
+                    new ResearchCache("matchStatsCache", CacheAlgorithms.createRandomMap(CACHE_MAX_SIZE))
+            ));
+            return randomManager;
+
+        }else if ("redis".equalsIgnoreCase(cacheAlgorithm)) {
 
             // 1. Domyślna konfiguracja z JSON-em
             RedisCacheConfiguration jsonConfiguration = RedisCacheConfiguration.defaultCacheConfig()
