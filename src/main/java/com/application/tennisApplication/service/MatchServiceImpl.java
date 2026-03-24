@@ -9,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class MatchServiceImpl implements MatchService {
@@ -66,7 +70,7 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public List<Integer> getPlayerScore(JsonNode node, String player) {
-        List <Integer> playerScore = new ArrayList<>();
+        List<Integer> playerScore = new ArrayList<>();
         playerScore.add(node.path(player).path("period1").asInt());
         playerScore.add(node.path(player).path("period2").asInt());
         playerScore.add(node.path(player).path("period3").asInt());
@@ -78,7 +82,7 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public String getSurface(JsonNode node) {
         String surface = node.path("tournament").path("uniqueTournament").path("groundType").asText();
-        switch(surface) {
+        switch (surface) {
             case "Hardcourt outdoor" -> surface = "twarda";
             case "Hardcourt indoor" -> surface = "twarda (hala)";
             case "Red clay" -> surface = "ziemna";
@@ -94,8 +98,7 @@ public class MatchServiceImpl implements MatchService {
         int points = node.path("tournament").path("uniqueTournament").path("tennisPoints").asInt();
         if (points == 2000) {
             rankOfTournament = "Wielki Szlem";
-        }
-        else {
+        } else {
             if (points == 0) rankOfTournament = "-";
             else rankOfTournament = String.valueOf(points);
         }
@@ -169,8 +172,8 @@ public class MatchServiceImpl implements MatchService {
         secondPlayerInfo.add(playerSeed);
         secondPlayerInfo.add(teamid);
 
-        List <Integer> firstPlayerScore = getPlayerScore(node, "homeScore");
-        List <Integer> secondPlayerScore = getPlayerScore(node, "awayScore");
+        List<Integer> firstPlayerScore = getPlayerScore(node, "homeScore");
+        List<Integer> secondPlayerScore = getPlayerScore(node, "awayScore");
 
         List<Integer> gamePoints = new ArrayList<>();
         gamePoints.add(node.path("homeScore").path("point").asInt());
@@ -193,8 +196,7 @@ public class MatchServiceImpl implements MatchService {
     }
 
     public List<HashMap<String, String>> fetchAndParseMatchStats(int id) throws JsonProcessingException {
-        APIConnection apiConnection = new APIConnection();
-        String response = apiConnection.getMatchStats(id);
+        String response = getMockedOrRealMatchStatsJson(id);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response);
@@ -209,4 +211,20 @@ public class MatchServiceImpl implements MatchService {
 
         return matchStats;
     }
+
+    private String getMockedOrRealMatchStatsJson(int id) {
+        try {
+            Path mockFilePath = Paths.get("mock_data", "stats_" + id + ".json");
+
+            if (Files.exists(mockFilePath)) {
+                return Files.readString(mockFilePath);
+            } else {
+                APIConnection apiConnection = new APIConnection();
+                return apiConnection.getMatchStats(id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Błąd podczas pobierania danych meczu", e);
+        }
+    }
+
 }

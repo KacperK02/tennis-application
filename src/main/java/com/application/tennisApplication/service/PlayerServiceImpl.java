@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -68,17 +71,28 @@ public class PlayerServiceImpl implements PlayerService{
     // Metoda dla Caffeine. Używamy teamID jako klucza w pamięci RAM.
     @Cacheable(value = "playerPhotosCache", key = "#teamID")
     public byte[] getPlayerPhotoCached(String teamID) {
-        System.out.println("Pobieram zdjęcie");
-        APIConnection apiConnection = new APIConnection();
-        return apiConnection.getPlayerPhoto(teamID);
+        return fetchPhoto(teamID);
     }
 
-    // Metoda dla HTTP Cache (zawsze uderza do zewnętrznego API)
+    // Metoda dla HTTP Cache (zawsze uderza do zewnętrznego API / Mocka)
     public byte[] getPlayerPhotoUncached(String teamID) {
-        APIConnection apiConnection = new APIConnection();
-        return apiConnection.getPlayerPhoto(teamID);
+        return fetchPhoto(teamID);
     }
 
+    private byte[] fetchPhoto(String teamID) {
+        try {
+            Path mockFilePath = Paths.get("mock_data", teamID + ".png");
+
+            if (Files.exists(mockFilePath)) {
+                return Files.readAllBytes(mockFilePath);
+            } else {
+                APIConnection apiConnection = new APIConnection();
+                return apiConnection.getPlayerPhoto(teamID);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Błąd podczas pobierania zdjęcia dla zawodnika o ID: " + teamID, e);
+        }
+    }
     @Override
     public void updateRanking() throws IOException {
         List <Player> oldRankingPlayers = getAllPlayers();
