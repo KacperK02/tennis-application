@@ -1,6 +1,7 @@
 package com.application.tennisApplication.service;
 
 import com.application.tennisApplication.API.APIConnection;
+import com.application.tennisApplication.cache.ResearchMetricsCollector;
 import com.application.tennisApplication.model.Match;
 import com.application.tennisApplication.model.Player;
 import com.application.tennisApplication.model.Tournament;
@@ -28,6 +29,12 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Autowired
     private MatchService matchService;
+
+    private ResearchMetricsCollector metricsCollector;
+
+    public PlayerServiceImpl(ResearchMetricsCollector metricsCollector) {
+        this.metricsCollector = metricsCollector;
+    }
 
     @Override
     public List<Player> getAllPlayers() {
@@ -80,6 +87,8 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
     private byte[] fetchPhoto(String teamID) {
+        metricsCollector.registerMiss();
+
         try {
             Path mockFilePath = Paths.get("mock_data", teamID + ".png");
 

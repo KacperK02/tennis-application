@@ -1,6 +1,7 @@
 package com.application.tennisApplication.controller;
 
 import com.application.tennisApplication.API.APIConnection;
+import com.application.tennisApplication.cache.ResearchMetricsCollector;
 import com.application.tennisApplication.model.Match;
 import com.application.tennisApplication.service.MatchService;
 import com.application.tennisApplication.service.PlayerService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +35,12 @@ public class MatchController {
 
     @Value("${app.cache.strategy:http}")
     private String cacheStrategy;
+
+    private ResearchMetricsCollector metricsCollector;
+
+    public MatchController(ResearchMetricsCollector metricsCollector) {
+        this.metricsCollector = metricsCollector;
+    }
 
     @GetMapping("/getLiveMatches")
     public ResponseEntity<List<Match>> getLiveMatches() throws JsonProcessingException {
@@ -53,6 +61,8 @@ public class MatchController {
 
     @GetMapping("/getMatchStats/{id}")
     public ResponseEntity<List<HashMap<String, String>>> getMatchStats(@PathVariable int id) throws JsonProcessingException {
+
+        metricsCollector.registerRequest(); // do testów JMetter
 
         if ("server".equalsIgnoreCase(cacheStrategy)) {
             // ==========================================
@@ -82,5 +92,11 @@ public class MatchController {
                     .cacheControl(cacheControl)
                     .body(stats);
         }
+    }
+
+    @GetMapping("/exportMetrics")
+    public ResponseEntity<String> exportMetrics(@RequestParam(defaultValue = "Badanie") String testName) {
+        String result = metricsCollector.exportMetricsToFile(testName);
+        return ResponseEntity.ok(result);
     }
 }

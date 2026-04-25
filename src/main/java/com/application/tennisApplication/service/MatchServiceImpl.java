@@ -1,6 +1,7 @@
 package com.application.tennisApplication.service;
 
 import com.application.tennisApplication.API.APIConnection;
+import com.application.tennisApplication.cache.ResearchMetricsCollector;
 import com.application.tennisApplication.model.Match;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,6 +23,12 @@ public class MatchServiceImpl implements MatchService {
 
     @Autowired
     private PlayerService playerService;
+
+    private ResearchMetricsCollector metricsCollector;
+
+    public MatchServiceImpl(ResearchMetricsCollector metricsCollector) {
+        this.metricsCollector = metricsCollector;
+    }
 
     @Override
     public int whoServes(JsonNode node, List<Integer> firstPlayerScore, List<Integer> secondPlayerScore, List<Integer> gamePoints) {
@@ -196,6 +203,8 @@ public class MatchServiceImpl implements MatchService {
     }
 
     public List<HashMap<String, String>> fetchAndParseMatchStats(int id) throws JsonProcessingException {
+        metricsCollector.registerMiss(); // jeśli tu weszliśmy, to danych nie było w cache
+
         String response = getMockedOrRealMatchStatsJson(id);
 
         ObjectMapper objectMapper = new ObjectMapper();

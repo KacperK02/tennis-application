@@ -1,6 +1,7 @@
 package com.application.tennisApplication.controller;
 
 import com.application.tennisApplication.API.APIConnection;
+import com.application.tennisApplication.cache.ResearchMetricsCollector;
 import com.application.tennisApplication.model.Match;
 import com.application.tennisApplication.model.Player;
 import com.application.tennisApplication.model.Tournament;
@@ -32,6 +33,12 @@ public class PlayerController {
 
     @Value("${app.cache.strategy:http}")
     private String cacheStrategy;
+
+    private ResearchMetricsCollector metricsCollector;
+
+    public PlayerController(ResearchMetricsCollector metricsCollector) {
+        this.metricsCollector = metricsCollector;
+    }
 
     @GetMapping("/getAllWTAPlayers")
     public ResponseEntity<List<Player>> getWTAPlayers(){
@@ -170,6 +177,8 @@ public class PlayerController {
 
     @GetMapping(value = "/player/photo/{teamID}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getPlayerPhoto(@PathVariable String teamID) {
+
+        metricsCollector.registerRequest();
 
         if ("server".equalsIgnoreCase(cacheStrategy)) {
             // ==========================================
